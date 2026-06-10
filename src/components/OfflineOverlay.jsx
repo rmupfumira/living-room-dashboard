@@ -1,4 +1,5 @@
 import { AlertTriangle, RefreshCw } from "lucide-react";
+import { HA_URL } from "../ha/client";
 
 /**
  * Full-screen offline overlay. Visible whenever HaContext status is "error"
@@ -30,7 +31,7 @@ export default function OfflineOverlay({ status, error, onRetry }) {
         </p>
         <div className="offline-meta">
           <span className="mlabel">Endpoint</span>
-          <code>{import.meta.env.VITE_HA_URL || "(unset)"}</code>
+          <code>{HA_URL || "(unset)"}</code>
         </div>
         <button type="button" className="offline-retry" onClick={onRetry}>
           <RefreshCw size={15} strokeWidth={2} />

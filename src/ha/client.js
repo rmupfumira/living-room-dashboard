@@ -15,8 +15,26 @@ import {
   subscribeEntities,
 } from "home-assistant-js-websocket";
 
-export const HA_URL = import.meta.env.VITE_HA_URL || "";
-export const HA_TOKEN = import.meta.env.VITE_HA_TOKEN || "";
+/**
+ * Normalise common URL mistakes:
+ *   ws://host:8123/api/websocket  → http://host:8123
+ *   wss://host:8123/              → https://host:8123
+ *   http://host:8123/             → http://host:8123
+ * The home-assistant-js-websocket library wants the BASE HA URL only; it
+ * appends `/api/websocket` itself and flips the protocol to ws/wss.
+ */
+function normalizeHaUrl(raw) {
+  if (!raw) return "";
+  let u = String(raw).trim();
+  if (u.startsWith("ws://")) u = "http://" + u.slice(5);
+  if (u.startsWith("wss://")) u = "https://" + u.slice(6);
+  u = u.replace(/\/api\/websocket\/?$/i, "");
+  u = u.replace(/\/+$/g, "");
+  return u;
+}
+
+export const HA_URL = normalizeHaUrl(import.meta.env.VITE_HA_URL);
+export const HA_TOKEN = (import.meta.env.VITE_HA_TOKEN || "").trim();
 export const HA_CONFIGURED = Boolean(HA_URL && HA_TOKEN);
 
 /** Human-readable description of a connection failure. */
