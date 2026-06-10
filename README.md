@@ -1,88 +1,82 @@
-# Smart Home Dashboard
+# NOCTURNE
 
-A custom family-hub dashboard for the living-room wall panel. Talks to Home Assistant via WebSocket. Self-hosted on the LAN.
+A precision-instrument smart-home command-deck dashboard for the living-room wall panel. Self-hosted on the LAN.
 
-## Stack
+Aesthetic: obsidian canvas · solid flat panels · hairline borders · a single electric "argon" mint accent · monospace micro-labels · status LEDs · tabular numerals. Ships with two themes — **Nocturne** (dark, default) and **Daybreak** (light) — and a live accent-hue picker.
 
-- **Vite 5** + **React 18** + **TypeScript** — fast dev loop, small bundle
-- **Tailwind CSS** for layout utilities; **CSS variables** for design tokens (OKLCH)
-- **Framer Motion** for entrance / interaction animations
-- **Zustand** for client state; **TanStack Query** for HA cache
-- **home-assistant-js-websocket** — official HA WS client
-- **lucide-react** for icons (matches the source design exactly)
+## Stack (deliberately minimal)
 
-## Requirements
-
-- **Node.js 20 LTS** (or 18 minimum). Vite 5 + this codebase use modern syntax (`??=`, optional chaining) and won't run on Node 14/16.
-  - Check: `node --version` — must report `v18.x.x` or higher.
-  - Upgrade on Windows: download the LTS installer from https://nodejs.org or use `nvm-windows`.
-
-## Getting started
-
-```bash
-cd dashboard-react
-npm install
-cp .env.example .env.local      # then edit with your HA URL + long-lived token
-npm run dev                     # http://localhost:5173
-```
+- **React 18** + **Vite 5** (JavaScript, no TypeScript)
+- **Plain CSS with custom properties** — one stylesheet, `:root` for dark, `[data-theme="light"]` for light. The accent ramp is set from JS so it's theme-aware.
+- **lucide-react** for icons (single-stroke, `strokeWidth={2}`)
+- No state library, no UI kit, no CSS-in-JS, no chart library. State is local hooks; the energy sparkline is hand-rolled flex bars.
 
 ## Project layout
 
 ```
 src/
-├── main.tsx                  React mount
-├── App.tsx                   Shell: rail + header + view + tabs
-├── styles/                   OKLCH tokens, globals, animations, shell layout
-├── components/
-│   ├── ui/                   Primitives: Icon, Switch, Ring, Arc, Toast, TweaksPanel
-│   ├── widgets/              Dashboard cards: Weather, Doorbell, Music, Thermostat, …
-│   └── views/                DashboardView, CamerasView, ScenesView, PowerView
-├── state/                    Zustand stores: tweaks, dashboard, music
-├── ha/                       Home Assistant WS client + hooks + entity map
-└── data/mock.ts              Mock HA state — used until real WS is wired
+  main.jsx                React mount
+  App.jsx                 Shell: state, rail, header, board grid, theme/accent
+  nocturne.css            Tokens (both themes) + all component styles
+  data.js                 Mock HA dataset
+  lib/
+    format.js             fmtTime · fmtDur · f1
+    accent.js             ACCENTS map + applyAccent(hex, dark)
+  components/
+    Rail.jsx · Header.jsx · SectionLabel.jsx · Switch.jsx · Led.jsx
+    ClimateCard.jsx · EnergyCard.jsx · WeatherCard.jsx
+    NowPlaying.jsx · DoorbellCard.jsx · SceneStrip.jsx
+    AccessCard.jsx · DeviceCard.jsx · Toast.jsx
+    ThemeToggle.jsx · AccentPicker.jsx
 ```
 
-## Build & deploy
-
-### Local dev
+## Getting started
 
 ```bash
-npm run build                   # → dist/  (~200 KB gzipped)
+npm install
+npm run dev                    # http://localhost:5173
+npm run build                  # → dist/ (~196 KB gzipped)
 ```
 
-### Self-hosted via Docker (Portainer-friendly)
+Requires Node 20+.
 
-Three files do all the work:
+## Self-hosted via Docker (Portainer-friendly)
+
+Same deploy infrastructure as before — image was rebuilt to use Node 20.
 
 | File | Purpose |
 |---|---|
 | `Dockerfile` | Multi-stage: Node 20-alpine builds the bundle → nginx-alpine serves it |
-| `docker-compose.yml` | One service, exposes `${DASHBOARD_PORT:-8080}` on the LAN, joins a `homelab` bridge network |
-| `deploy/nginx.conf` | SPA fallback, immutable caching for hashed assets, gzip on |
-| `deploy.sh` | Local one-shot: `./deploy.sh` to build+start, `./deploy.sh logs` to tail, `./deploy.sh stop` to stop, `./deploy.sh pull` to git-pull and rebuild |
+| `docker-compose.yml` | One service, port `${DASHBOARD_PORT:-8080}`, joins a `homelab` bridge net |
+| `deploy/nginx.conf` | SPA fallback, gzip on, immutable cache for hashed assets |
+| `deploy.sh` | Local one-shot: `./deploy.sh` (up) · `stop` · `restart` · `logs` · `pull` |
+| `.gitattributes` | Forces LF on shell scripts so deploy.sh works on Linux |
 
-**From the homelab host:**
+### From the homelab
 
 ```bash
-git clone <this-repo> dashboard-react
-cd dashboard-react
-cp .env.example .env            # tweak DASHBOARD_PORT / TZ if needed
-./deploy.sh                     # http://<host-ip>:8080
+git clone https://github.com/rmupfumira/kitchen-dashboard.git
+cd kitchen-dashboard
+cp .env.example .env
+./deploy.sh                                   # http://<host>:8080
 ```
 
-**From Portainer (recommended):**
+### From Portainer
 
-1. **Stacks → Add stack → Git repository**
-2. Repository URL: `https://github.com/<you>/dashboard-react.git`
-3. Compose path: `docker-compose.yml`
-4. (Optional) **Enable automatic updates** — Portainer will git-poll and rebuild on every push to main
-5. **Environment variables**: `DASHBOARD_PORT=8080`, `TZ=Africa/Johannesburg`
-6. **Deploy the stack**
+1. **Stacks → Add stack → Web editor**, paste `docker-compose.yml`, OR
+2. **Build method → Repository** (private repo needs a fine-grained PAT)
+3. Env vars: `DASHBOARD_PORT=8080`, `TZ=Africa/Johannesburg`
+4. **Deploy the stack**
 
-That's it — every `git push` to the dashboard repo will auto-redeploy the container.
+## Two intentional design choices
 
-## Current phase
+1. **Card entrance is transform-only.** The cards rise on mount but their visible end state is the base style, never `opacity: 0 → 1`. Several hero cards re-render every second (clock, energy flicker, music progress); animating opacity would restart the animation each tick and pin the card invisible.
+2. **Transitions are suppressed during theme flip.** Chromium can latch theme-derived properties mid-transition, leaving elements stuck at the old colour. The theme toggle disables `transition` for two animation frames, swaps `data-theme` + accent, then re-enables.
 
-**Phases 1-3 complete:** scaffold, design system, app shell, all dashboard widgets (Weather / Doorbell / Music / Thermostat / Light / Mood / Access / Scenes / Devices), Cameras / Scenes / Power views, and Docker deploy bundle.
+## What works today
 
-**Phase 4 (HA wiring)** is pending. Currently the dashboard runs on mock data — every interaction works (toggle a switch, drag a dial, run a scene) but state is in-memory. Phase 4 swaps the mock store for `home-assistant-js-websocket` subscriptions.
+Mock-data only. Every interaction is real (toggles, steppers, scene activation, music transport, doorbell unlock, search filter, room switching, live clock, energy flicker, theme + accent persistence) but state is in-memory.
+
+## Phase 4 — real Home Assistant wiring
+
+Pending. The hooks shape (`devices`, `climate`, `security`, `inverter`) already mirrors HA entity payloads, so the swap is local to App.jsx — every component stays untouched.
