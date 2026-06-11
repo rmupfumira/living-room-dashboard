@@ -1146,18 +1146,33 @@ body::after {
   overflow: hidden;
 }
 .solar-tile .ic {
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
   display: grid;
   place-items: center;
   background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.05);
   margin-bottom: 12px;
+  transition: color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
-.solar-tile.solar .ic { color: var(--warn); }
-.solar-tile.load .ic { color: var(--ink-soft); }
-.solar-tile.grid .ic { color: var(--blue); }
-.solar-tile.battery .ic { color: var(--green); }
+/* When `.glow` is on, the icon chip gets a subtle inner+outer halo that
+   picks up the icon's `color` via currentColor — so the tint set inline
+   on the parent .ic colors the glow automatically. */
+.solar-tile .ic.glow {
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in oklch, currentColor 35%, transparent), transparent 65%),
+    rgba(255, 255, 255, 0.04);
+  border-color: color-mix(in oklch, currentColor 40%, transparent);
+  box-shadow:
+    0 0 22px color-mix(in oklch, currentColor 30%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.solar-tile .ic.pulse { animation: solar-ic-pulse 1.4s ease-in-out infinite; }
+@keyframes solar-ic-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
 .solar-tile .label {
   font-family: var(--mono);
   font-size: 10px;

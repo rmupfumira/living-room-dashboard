@@ -1,4 +1,4 @@
-import { Sun, House, UtilityPole, BatteryCharging, Zap } from "lucide-react";
+import { Sun, House, UtilityPole, Zap, Battery, BatteryLow, BatteryMedium, BatteryFull, BatteryCharging, BatteryWarning, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity } from "../ha/HaContext";
 
@@ -17,13 +17,37 @@ function toKw(ent) {
 const f1 = (n) => (Math.round(Math.abs(n) * 10) / 10).toFixed(1);
 const fInt = (n) => String(Math.round(n));
 
+/**
+ * Pick the battery icon + tone from SoC + charge direction.
+ *   charging   → BatteryCharging in green
+ *   ≥ 80%      → BatteryFull in green
+ *   ≥ 50%      → BatteryMedium in lime
+ *   ≥ 25%      → BatteryLow in amber
+ *   ≥ 10%      → BatteryLow in orange
+ *   < 10%      → BatteryWarning in red (pulsing)
+ */
+function batteryVisual(socPct, charging) {
+  if (!Number.isFinite(socPct)) {
+    return { Icon: Battery, color: "var(--ink-faint)", glow: false, pulse: false };
+  }
+  if (charging) {
+    return { Icon: BatteryCharging, color: "#57e08a", glow: true, pulse: false };
+  }
+  if (socPct >= 80) return { Icon: BatteryFull, color: "#57e08a", glow: true, pulse: false };
+  if (socPct >= 50) return { Icon: BatteryMedium, color: "#b8f24a", glow: true, pulse: false };
+  if (socPct >= 25) return { Icon: BatteryLow, color: "#ffc46b", glow: true, pulse: false };
+  if (socPct >= 10) return { Icon: BatteryLow, color: "#ff9c4d", glow: true, pulse: false };
+  return { Icon: BatteryWarning, color: "#ff4d6d", glow: true, pulse: true };
+}
+
 /** A single 18px-radius solar/load/grid/battery tile. */
-function Tile({ klass, Icon, label, value, unit, sub, barPct = null, unavail = false }) {
+function Tile({ klass, Icon, label, value, unit, sub, barPct = null, unavail = false, iconColor, iconGlow = false, iconPulse = false }) {
   const cls = "solar-tile " + klass + (unavail ? " unavail" : "");
+  const icStyle = iconColor ? { color: iconColor } : undefined;
   return (
     <div className={cls}>
-      <div className="ic">
-        <Icon size={18} strokeWidth={2} />
+      <div className={"ic" + (iconGlow ? " glow" : "") + (iconPulse ? " pulse" : "")} style={icStyle}>
+        <Icon size={24} strokeWidth={2.2} />
       </div>
       <div className="label">{label}</div>
       <div className="value">
@@ -56,13 +80,20 @@ export default function SolarTiles() {
   const gridKw = toKw(gridPower);
   const battKw = toKw(battPower);
   const socPct = num(soc, NaN);
-  const peakKw = num(pvPeakF, 0) || 6.0; // sensible fallback for the bar scale
+  const peakKw = num(pvPeakF, 0) || 6.0;
 
   const importing = gridKw > 0.05;
   const exporting = gridKw < -0.05;
   const charging = battKw > 0.05;
   const discharging = battKw < -0.05;
   const selfPct = num(selfS, NaN);
+
+  // Grid icon: changes direction based on import/export
+  const GridIcon = exporting ? ArrowUpFromLine : importing ? ArrowDownToLine : UtilityPole;
+  const gridColor = exporting ? "#57e08a" : importing ? "#ff9c4d" : "#38a3ff";
+
+  // Battery icon + colour by SoC + charge direction
+  const battVis = batteryVisual(socPct, charging);
 
   return (
     <div className="span-solar" style={{ gridColumn: "span 12" }}>
@@ -87,6 +118,8 @@ export default function SolarTiles() {
           <Tile
             klass="solar"
             Icon={Sun}
+            iconColor="#ffc46b"
+            iconGlow
             label="PV Power"
             value={f1(pvKw)}
             unit="kW"
@@ -97,6 +130,8 @@ export default function SolarTiles() {
           <Tile
             klass="load"
             Icon={House}
+            iconColor="#c8cad6"
+            iconGlow
             label="Load"
             value={f1(loadKw)}
             unit="kW"
@@ -106,17 +141,22 @@ export default function SolarTiles() {
           />
           <Tile
             klass="grid"
-            Icon={UtilityPole}
-            label={importing ? "Importing" : exporting ? "Exporting" : "Grid"}
+            Icon={GridIcon}
+            iconColor={gridColor}
+            iconGlow={importing || exporting}
+            label={importing ? "Importing" : exporting ? "Exporting" : "Grid Standby"}
             value={f1(gridKw)}
             unit="kW"
-            sub={`${f1(num(gridIn, 0))} kWh in / ${f1(num(gridOut, 0))} kWh out`}
+            sub={`${f1(num(gridIn, 0))} kWh in · ${f1(num(gridOut, 0))} kWh out`}
             barPct={Math.min(100, Math.abs(gridKw) * 10)}
             unavail={!gridPower}
           />
           <Tile
             klass="battery"
-            Icon={BatteryCharging}
+            Icon={battVis.Icon}
+            iconColor={battVis.color}
+            iconGlow={battVis.glow}
+            iconPulse={battVis.pulse}
             label="Battery"
             value={Number.isFinite(socPct) ? fInt(socPct) : "—"}
             unit="%"
