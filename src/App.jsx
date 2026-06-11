@@ -6,7 +6,8 @@ import Header from "./components/Header";
 import Toast from "./components/Toast";
 import OfflineOverlay from "./components/OfflineOverlay";
 import AlertsCard from "./components/AlertsCard";
-import ClockWeatherCard from "./components/ClockWeatherCard";
+import ClockCard from "./components/ClockCard";
+import WeatherCard from "./components/WeatherCard";
 import SecurityCard from "./components/SecurityCard";
 import SolarTiles from "./components/SolarTiles";
 import MediaCard from "./components/MediaCard";
@@ -56,7 +57,8 @@ export default function App() {
         <div className="board">
           <div className="grid">
             <AlertsCard />
-            <ClockWeatherCard />
+            <ClockCard />
+            <WeatherCard />
             <SecurityCard onToast={fireToast} />
             <SolarTiles />
             <MediaCard onToast={fireToast} />
