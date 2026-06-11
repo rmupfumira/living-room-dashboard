@@ -1180,6 +1180,9 @@ body::after {
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--ink-mute);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .solar-tile .value {
   margin-top: 4px;
@@ -1203,6 +1206,9 @@ body::after {
   font-size: 10px;
   color: var(--ink-mute);
   letter-spacing: 0.08em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .solar-tile .bar {
   position: absolute;

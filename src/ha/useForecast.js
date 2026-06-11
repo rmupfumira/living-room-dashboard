@@ -1,24 +1,40 @@
 /**
- * Fetches a weather entity's daily forecast via the
- * `weather.get_forecasts` service (return_response: true).
+ * Fetches a weather entity's forecast.
  *
- * HA 2024+ removed `forecast` from `weather.*` attributes; the modern way is
- * to either subscribe to `weather/subscribe_forecasts` or call the service.
- * We use the service form because it's simpler and refreshing every 15 min
- * is more than enough for a daily forecast.
+ * HA 2024+ removed `forecast` from `weather.*` attributes. The integration
+ * either:
+ *   a) supports `weather.get_forecasts` with return_response (modern), or
+ *   b) only supports `weather/subscribe_forecasts` (websocket stream).
+ *
+ * We try (a) first; if it doesn't yield rows we fall back to (b). Some
+ * integrations also key the response by `entity_id`, others return the
+ * forecast array directly — the parser handles both shapes.
+ *
+ * Falls back from "daily" to "hourly" if the integration doesn't expose daily.
  */
 import { useEffect, useState } from "react";
 import { useHA } from "./HaContext";
 
-export function useForecast(entityId, type = "daily", refreshMs = 15 * 60 * 1000) {
+/** Robust forecast extractor — handles three observed response shapes. */
+function extractForecast(res, entityId) {
+  const r = res?.response;
+  if (!r) return [];
+  if (Array.isArray(r?.[entityId]?.forecast)) return r[entityId].forecast;
+  if (Array.isArray(r?.[entityId])) return r[entityId];
+  if (Array.isArray(r?.forecast)) return r.forecast;
+  return [];
+}
+
+export function useForecast(entityId, preferredType = "daily", refreshMs = 15 * 60 * 1000) {
   const { conn, status } = useHA();
   const [forecast, setForecast] = useState([]);
 
   useEffect(() => {
     if (status !== "connected" || !conn || !entityId) return undefined;
     let alive = true;
+    let subUnsub;
 
-    const fetchForecast = async () => {
+    const tryServiceCall = async (type) => {
       try {
         const res = await conn.sendMessagePromise({
           type: "call_service",
@@ -28,21 +44,62 @@ export function useForecast(entityId, type = "daily", refreshMs = 15 * 60 * 1000
           target: { entity_id: entityId },
           return_response: true,
         });
-        if (!alive) return;
-        const arr = res?.response?.[entityId]?.forecast || [];
-        setForecast(arr);
+        return extractForecast(res, entityId);
       } catch (err) {
-        console.warn("[AURORA] forecast fetch failed", err);
+        console.warn(`[AURORA] get_forecasts ${type} failed`, err);
+        return [];
       }
     };
 
-    fetchForecast();
-    const id = setInterval(fetchForecast, refreshMs);
+    const trySubscribe = async (type) => {
+      try {
+        subUnsub = await conn.subscribeMessage(
+          (event) => {
+            if (!alive) return;
+            const arr = event?.forecast || [];
+            if (arr.length) setForecast(arr);
+          },
+          {
+            type: "weather/subscribe_forecast",
+            forecast_type: type,
+            entity_id: entityId,
+          }
+        );
+      } catch (err) {
+        console.warn(`[AURORA] subscribe_forecast ${type} failed`, err);
+      }
+    };
+
+    const load = async () => {
+      // 1) service call, preferred type
+      let arr = await tryServiceCall(preferredType);
+      if (alive && arr.length) {
+        setForecast(arr);
+        return;
+      }
+      // 2) service call, fallback type
+      const fallback = preferredType === "daily" ? "hourly" : "daily";
+      arr = await tryServiceCall(fallback);
+      if (alive && arr.length) {
+        setForecast(arr);
+        return;
+      }
+      // 3) live subscription, preferred then fallback
+      await trySubscribe(preferredType);
+      if (alive && forecast.length === 0) {
+        await trySubscribe(fallback);
+      }
+    };
+
+    load();
+    const id = setInterval(load, refreshMs);
     return () => {
       alive = false;
       clearInterval(id);
+      try { subUnsub && subUnsub(); } catch {}
     };
-  }, [conn, status, entityId, type, refreshMs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [conn, status, entityId, preferredType, refreshMs]);
 
   return forecast;
 }

@@ -91,6 +91,12 @@ export default function SolarTiles() {
   // Grid icon: changes direction based on import/export
   const GridIcon = exporting ? ArrowUpFromLine : importing ? ArrowDownToLine : UtilityPole;
   const gridColor = exporting ? "#57e08a" : importing ? "#ff9c4d" : "#38a3ff";
+  // Compact grid sub: only show the direction that's relevant; both if standby.
+  const gridSub = exporting
+    ? `↑ ${f1(num(gridOut, 0))} kWh today`
+    : importing
+    ? `↓ ${f1(num(gridIn, 0))} kWh today`
+    : `↓ ${f1(num(gridIn, 0))} · ↑ ${f1(num(gridOut, 0))} kWh`;
 
   // Battery icon + colour by SoC + charge direction
   const battVis = batteryVisual(socPct, charging);
@@ -144,10 +150,10 @@ export default function SolarTiles() {
             Icon={GridIcon}
             iconColor={gridColor}
             iconGlow={importing || exporting}
-            label={importing ? "Importing" : exporting ? "Exporting" : "Grid Standby"}
+            label="Grid"
             value={f1(gridKw)}
             unit="kW"
-            sub={`${f1(num(gridIn, 0))} kWh in · ${f1(num(gridOut, 0))} kWh out`}
+            sub={gridSub}
             barPct={Math.min(100, Math.abs(gridKw) * 10)}
             unavail={!gridPower}
           />

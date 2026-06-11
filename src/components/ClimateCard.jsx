@@ -17,7 +17,10 @@ export default function ClimateCard({ onToast }) {
   const call = useService();
 
   const target = Number(ent?.attributes?.temperature);
-  const current = Number(ent?.attributes?.current_temperature);
+  const currentRaw = Number(ent?.attributes?.current_temperature);
+  // Treat exactly-0 as "no reading" — many ACs report 0 when off rather than
+  // null/unavailable, which would otherwise render as "Room 0.0°C".
+  const current = Number.isFinite(currentRaw) && Math.abs(currentRaw) > 0.01 ? currentRaw : null;
   const hvacMode = ent?.state || "off";
   const minT = Number(ent?.attributes?.min_temp) || 16;
   const maxT = Number(ent?.attributes?.max_temp) || 30;
@@ -57,7 +60,11 @@ export default function ClimateCard({ onToast }) {
           <div>
             <div className="card-title">Air Conditioner</div>
             <div className="card-sub mlabel">
-              {unavail ? "Unavailable" : Number.isFinite(current) ? `Room ${current.toFixed(1)}°C` : "Living Room"}
+              {unavail
+                ? "Unavailable"
+                : current != null
+                ? `Room ${current.toFixed(1)}°C`
+                : ent?.attributes?.friendly_name || "Living Room"}
             </div>
           </div>
           <div className="spacer" />
