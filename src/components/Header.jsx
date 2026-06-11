@@ -1,7 +1,30 @@
 import { useEffect, useState } from "react";
-import { Bell, Sun } from "lucide-react";
+import { Bell, Sun, RefreshCw } from "lucide-react";
 import { fmtTime } from "../lib/format";
 import Led from "./Led";
+
+/**
+ * Hard reload — clears any service-worker caches + busts the URL so the
+ * wall-panel Chromium drops stale assets after a deploy. Saves a Pi
+ * keyboard trip when the dashboard doesn't refresh on its own.
+ */
+async function hardReload() {
+  try {
+    if ("caches" in window) {
+      const names = await caches.keys();
+      await Promise.all(names.map((n) => caches.delete(n)));
+    }
+    if ("serviceWorker" in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister()));
+    }
+  } catch {
+    /* best-effort */
+  }
+  const url = new URL(window.location.href);
+  url.searchParams.set("_nc", String(Date.now()));
+  window.location.replace(url.toString());
+}
 
 /**
  * Aurora header — greeting, sysline, clock (mono HH:MM:SS), bell.
@@ -52,6 +75,15 @@ export default function Header({ haStatus = "connecting", notifCount = 0 }) {
         >
           <Bell size={18} strokeWidth={2} />
           {notifCount > 0 && <span className="ping" />}
+        </button>
+        <button
+          type="button"
+          className="icon-btn subtle"
+          onClick={hardReload}
+          aria-label="Hard reload"
+          title="Hard reload (clear cache)"
+        >
+          <RefreshCw size={15} strokeWidth={2} />
         </button>
       </div>
     </header>
