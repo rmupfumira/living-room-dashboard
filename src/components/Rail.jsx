@@ -1,20 +1,23 @@
-import { HousePlug, LayoutDashboard, Cctv, Sparkles, Zap, Settings } from "lucide-react";
+import { HousePlug, LayoutDashboard, Zap, Cpu, Mic, BarChart3, Cctv, Settings } from "lucide-react";
 
 /**
- * Left rail — fixed-width vertical nav. The logo is purely decorative;
- * Cameras/Scenes/Power buttons fire a toast (out of scope for this build).
+ * Floating capsule rail — fixed left-side 92px wide.
+ * The non-Home buttons are decorative for now; clicking them fires a toast
+ * via the parent's onPick callback.
  */
 const ITEMS = [
-  { id: "dashboard", Icon: LayoutDashboard, label: "Home" },
+  { id: "home", Icon: LayoutDashboard, label: "Home" },
+  { id: "energy", Icon: Zap, label: "Energy" },
+  { id: "devices", Icon: Cpu, label: "Devices" },
+  { id: "voice", Icon: Mic, label: "Voice" },
+  { id: "stats", Icon: BarChart3, label: "Stats" },
   { id: "cameras", Icon: Cctv, label: "Cameras" },
-  { id: "scenes", Icon: Sparkles, label: "Scenes" },
-  { id: "power", Icon: Zap, label: "Power" },
 ];
 
 export default function Rail({ view, onPick }) {
   return (
     <nav className="rail">
-      <div className="rail-logo">
+      <div className="rail-logo" aria-hidden="true">
         <HousePlug size={22} strokeWidth={2} />
       </div>
       {ITEMS.map(({ id, Icon, label }) => (
@@ -23,16 +26,17 @@ export default function Rail({ view, onPick }) {
           type="button"
           className={"rail-btn" + (view === id ? " active" : "")}
           onClick={() => onPick(id, label)}
-          title={label}
           aria-label={label}
+          title={label}
         >
           <Icon size={20} strokeWidth={2} />
         </button>
       ))}
       <div className="rail-spacer" />
-      <button type="button" className="rail-btn" title="Settings" aria-label="Settings">
+      <button type="button" className="rail-btn" aria-label="Settings" title="Settings">
         <Settings size={20} strokeWidth={2} />
       </button>
+      <div className="rail-avatar" aria-hidden="true">W</div>
     </nav>
   );
 }

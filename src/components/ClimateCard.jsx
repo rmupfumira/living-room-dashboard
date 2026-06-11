@@ -1,96 +1,118 @@
-import { Thermometer, Snowflake, Flame, Fan, CircleGauge } from "lucide-react";
-import Led from "./Led";
+import { Snowflake, Flame, Fan, CircleGauge, Wind, Plus, Minus, Thermometer } from "lucide-react";
+import { ENTITIES } from "../entities";
+import { useEntity } from "../ha/HaContext";
+import { useService } from "../ha/useService";
 import Switch from "./Switch";
 
 const MODES = [
-  { id: "cool", Icon: Snowflake, label: "Cool" },
-  { id: "heat", Icon: Flame, label: "Heat" },
-  { id: "fan", Icon: Fan, label: "Fan" },
-  { id: "auto", Icon: CircleGauge, label: "Auto" },
+  { id: "cool", Icon: Snowflake },
+  { id: "heat", Icon: Flame },
+  { id: "fan_only", Icon: Fan },
+  { id: "auto", Icon: CircleGauge },
+  { id: "dry", Icon: Wind },
 ];
 
-/**
- * Active-room climate card — temp readout, target stepper, humidity,
- * mode buttons, swing/eco toggles, watt draw.
- */
-export default function ClimateCard({ roomName, climate, onPatch, onToast }) {
+export default function ClimateCard({ onToast }) {
+  const ent = useEntity(ENTITIES.climate);
+  const call = useService();
+
+  const target = Number(ent?.attributes?.temperature);
+  const current = Number(ent?.attributes?.current_temperature);
+  const hvacMode = ent?.state || "off";
+  const minT = Number(ent?.attributes?.min_temp) || 16;
+  const maxT = Number(ent?.attributes?.max_temp) || 30;
+  const step = Number(ent?.attributes?.target_temp_step) || 0.5;
+  const isOn = hvacMode !== "off" && hvacMode !== "unavailable";
+  const unavail = !ent || hvacMode === "unavailable";
+
   const adjust = (delta) => {
-    const target = Math.max(16, Math.min(30, climate.target + delta));
-    onPatch({ target });
-    onToast("thermometer", `Target ${target}°C`);
+    if (!ent || !Number.isFinite(target)) return;
+    const t = Math.max(minT, Math.min(maxT, target + delta));
+    onToast?.("thermometer", `Target ${t}°C`);
+    call("climate", "set_temperature", { temperature: t }, { entity_id: ENTITIES.climate });
   };
 
   const setMode = (mode) => {
-    onPatch({ mode });
-    onToast("activity", `${mode.toUpperCase()} mode`);
+    onToast?.("activity", mode.replace("_", " "));
+    call("climate", "set_hvac_mode", { hvac_mode: mode }, { entity_id: ENTITIES.climate });
   };
 
-  const toggleSwing = () => {
-    onPatch({ swing: !climate.swing });
-    onToast("wind", `Swing ${!climate.swing ? "on" : "off"}`);
-  };
-
-  const toggleEco = () => {
-    onPatch({ auto: !climate.auto });
-    onToast("leaf", `Eco ${!climate.auto ? "on" : "off"}`);
+  const toggleOn = () => {
+    if (isOn) {
+      onToast?.("power-off", "AC off");
+      call("climate", "turn_off", {}, { entity_id: ENTITIES.climate });
+    } else {
+      onToast?.("power", "AC on");
+      call("climate", "turn_on", {}, { entity_id: ENTITIES.climate });
+    }
   };
 
   return (
-    <div className="card rise" style={{ gridColumn: "span 4" }}>
-      <div className="card-head">
-        <div className="card-ic">
-          <Thermometer size={16} strokeWidth={2} />
+    <div className="span-ac" style={{ gridColumn: "span 4" }}>
+      <div className="card rise">
+        <div className="card-head">
+          <div className="card-ic" style={{ color: "var(--blue)" }}>
+            <Thermometer size={18} strokeWidth={2} />
+          </div>
+          <div>
+            <div className="card-title">Air Conditioner</div>
+            <div className="card-sub mlabel">
+              {unavail ? "Unavailable" : Number.isFinite(current) ? `Room ${current.toFixed(1)}°C` : "Living Room"}
+            </div>
+          </div>
+          <div className="spacer" />
+          <Switch on={isOn} onClick={toggleOn} disabled={unavail} />
         </div>
-        <div>
-          <div className="card-title">Climate</div>
-          <div className="card-sub mlabel">{roomName}</div>
-        </div>
-        <div className="spacer" />
-        <Led tone="on" />
-      </div>
 
-      <div className="climate-temp">
-        {climate.temp}
-        <span className="unit">°C</span>
-      </div>
-
-      <div className="climate-target">
-        <button type="button" className="stepper-btn" onClick={() => adjust(-0.5)} aria-label="cooler">−</button>
-        <div>
-          <div className="climate-target-val">{climate.target.toFixed(1)}°</div>
-          <div className="mlabel" style={{ marginTop: 2 }}>Target</div>
-        </div>
-        <button type="button" className="stepper-btn" onClick={() => adjust(0.5)} aria-label="warmer">+</button>
-        <div className="climate-hum">
-          <div className="v">{climate.humidity}%</div>
-          <div className="mlabel" style={{ marginTop: 2 }}>Humidity</div>
-        </div>
-      </div>
-
-      <div className="mode-row">
-        {MODES.map(({ id, Icon }) => (
+        <div className="climate-dial-wrap">
           <button
-            key={id}
             type="button"
-            className={"mode-btn" + (climate.mode === id ? " on" : "")}
-            onClick={() => setMode(id)}
-            aria-label={id}
+            className="climate-stepper l"
+            onClick={() => adjust(-step)}
+            disabled={unavail || !isOn}
+            aria-label="cooler"
           >
-            <Icon size={16} strokeWidth={2} />
+            <Minus size={16} strokeWidth={2.4} />
           </button>
-        ))}
-      </div>
+          <div className="climate-dial">
+            <div>
+              <div className="climate-dial-val">
+                {Number.isFinite(target) ? target.toFixed(0) : "—"}
+                <span className="u">°C</span>
+              </div>
+              <div className="mlabel climate-dial-label">Target</div>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="climate-stepper r"
+            onClick={() => adjust(step)}
+            disabled={unavail || !isOn}
+            aria-label="warmer"
+          >
+            <Plus size={16} strokeWidth={2.4} />
+          </button>
+        </div>
 
-      <div className="climate-foot">
-        <button type="button" className={"chip" + (climate.swing ? " on" : "")} onClick={toggleSwing}>
-          Swing
-        </button>
-        <button type="button" className={"chip" + (climate.auto ? " on" : "")} onClick={toggleEco}>
-          Eco
-        </button>
-        <div className="draw">
-          <div className="draw-v">{climate.watt} W</div>
-          <div className="mlabel" style={{ marginTop: 2 }}>Drawing</div>
+        <div className="climate-modes">
+          {MODES.map(({ id, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              className={"chip" + (hvacMode === id ? " on" : "")}
+              onClick={() => setMode(id)}
+              disabled={unavail}
+              aria-label={id}
+            >
+              <Icon size={14} strokeWidth={2} />
+            </button>
+          ))}
+        </div>
+
+        <div className="climate-foot">
+          <div className="climate-mode">
+            Mode <strong>{hvacMode.replace(/_/g, " ")}</strong>
+          </div>
         </div>
       </div>
     </div>

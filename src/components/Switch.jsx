@@ -1,16 +1,15 @@
 /**
- * Pill toggle — 44×25, on-state glows in the active accent.
- * Stops click propagation so it can sit inside a clickable card without
- * double-triggering the card's onClick.
+ * 46×27 pill toggle. Stops click propagation so it can sit inside clickable rows.
  */
-export default function Switch({ on, onClick, ariaLabel = "toggle" }) {
+export default function Switch({ on, onClick, ariaLabel = "toggle", disabled = false }) {
   return (
     <button
       type="button"
       className={"switch" + (on ? " on" : "")}
+      disabled={disabled}
       onClick={(e) => {
         e.stopPropagation();
-        onClick && onClick();
+        if (!disabled && onClick) onClick();
       }}
       aria-pressed={on}
       aria-label={ariaLabel}
