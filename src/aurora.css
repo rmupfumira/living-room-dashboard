@@ -312,6 +312,7 @@ body::after {
   position: relative;
   overflow: hidden;
   opacity: 1; /* never animate this */
+  height: 100%; /* cards in the same grid row stretch to the tallest one */
 }
 
 .card-head {
@@ -604,10 +605,13 @@ body::after {
 }
 
 /* ─── Doorbell card ─────────────────────────────────────── */
+/* Flex column — camera feed flexes to fill the space left by the actions
+   block, so the card matches whatever its row-mate (Security) is tall. */
 .doorbell { padding: 0; display: flex; flex-direction: column; }
 .db-feed {
   position: relative;
-  aspect-ratio: 16 / 9;
+  flex: 1;
+  min-height: 220px; /* don't let the camera disappear on tiny screens */
   background: linear-gradient(135deg, #1a1a26, #0a0a10);
   overflow: hidden;
 }
@@ -660,7 +664,13 @@ body::after {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 1; }
 }
-.db-actions { padding: 18px 22px; display: flex; flex-direction: column; gap: 14px; }
+.db-actions {
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-shrink: 0; /* always renders at natural height; camera takes remainder */
+}
 .db-banner {
   display: flex;
   align-items: center;
