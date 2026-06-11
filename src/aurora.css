@@ -291,6 +291,29 @@ body::after {
   transition: all 0.18s;
 }
 .icon-btn:hover { color: var(--ink); border-color: var(--card-line-hi); }
+/* Subtle variant — dimmer, smaller, for low-priority utilities (hard reload, etc.) */
+.icon-btn.subtle {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: transparent;
+  border-color: transparent;
+  color: var(--ink-faint);
+  opacity: 0.55;
+}
+.icon-btn.subtle:hover {
+  opacity: 1;
+  color: var(--ink-soft);
+  background: var(--recess-1);
+  border-color: var(--card-line);
+}
+.icon-btn.subtle:active svg {
+  animation: subtle-spin 0.5s ease-out;
+}
+@keyframes subtle-spin {
+  from { transform: rotate(0); }
+  to { transform: rotate(360deg); }
+}
 .icon-btn .ping {
   position: absolute;
   top: 8px;
