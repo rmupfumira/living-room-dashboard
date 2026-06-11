@@ -29,6 +29,13 @@ const condLabel = (state) =>
     .replace(/-/g, " ")
     .replace(/\b\w/g, (c) => c.toUpperCase());
 
+/** Convert wind bearing (0–360°) to a cardinal abbreviation, e.g. 345 → 'NNW'. */
+function bearingToCardinal(deg) {
+  if (deg == null || !Number.isFinite(deg)) return "";
+  const dirs = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE", "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
+  return dirs[Math.round(deg / 22.5) % 16];
+}
+
 /** "Wed", "Thu", … from an HA datetime string. */
 function dayShort(iso) {
   if (!iso) return "—";
