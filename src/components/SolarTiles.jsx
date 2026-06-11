@@ -102,7 +102,7 @@ export default function SolarTiles() {
   const battVis = batteryVisual(socPct, charging);
 
   return (
-    <div className="span-solar" style={{ gridColumn: "span 12" }}>
+    <div className="span-solar" style={{ gridColumn: "span 8" }}>
       <div className="card rise">
         <div className="card-head">
           <div className="card-ic" style={{ color: "var(--blue)" }}>

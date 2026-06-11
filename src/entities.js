@@ -46,6 +46,14 @@ export const ENTITIES = {
     selfSufficiency: "sensor.off_grid_percentage_today", // %
   },
 
+  /* ─── Scenes (4 one-tap moods) ──────────────────────────── */
+  scenes: [
+    { id: "morning", name: "Good Morning", icon: "sunrise",      entity: "scene.good_morning" },
+    { id: "night",   name: "Night",        icon: "moon",         entity: "scene.good_night" },
+    { id: "guest",   name: "Guest",        icon: "users",        entity: "input_boolean.guest_mode" },
+    { id: "movie",   name: "Movie",        icon: "clapperboard", entity: "input_boolean.movie_scene" },
+  ],
+
   /* ─── Weather ────────────────────────────────────────────── */
   weather: "weather.pirateweather",
 

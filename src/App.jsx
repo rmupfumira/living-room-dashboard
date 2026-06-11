@@ -10,6 +10,7 @@ import ClockCard from "./components/ClockCard";
 import WeatherCard from "./components/WeatherCard";
 import SecurityCard from "./components/SecurityCard";
 import SolarTiles from "./components/SolarTiles";
+import ScenesCard from "./components/ScenesCard";
 import MediaCard from "./components/MediaCard";
 import ClimateCard from "./components/ClimateCard";
 import LampCard from "./components/LampCard";
@@ -61,6 +62,7 @@ export default function App() {
             <WeatherCard />
             <SecurityCard onToast={fireToast} />
             <SolarTiles />
+            <ScenesCard onToast={fireToast} />
             <MediaCard onToast={fireToast} />
             <ClimateCard onToast={fireToast} />
             <LampCard onToast={fireToast} />

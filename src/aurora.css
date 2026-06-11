@@ -1189,28 +1189,31 @@ body::after {
 .secure-home-btn:active { transform: translateY(0); }
 
 /* ─── Solar tiles ───────────────────────────────────────── */
+/* Compact mode: span dropped from 12 → 8 to make room for Scenes alongside.
+   Tighter padding + smaller icon + tighter spacing so 4 tiles read well at
+   the narrower width. */
 .solar-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  gap: 10px;
 }
 .solar-tile {
   position: relative;
-  padding: 18px;
-  border-radius: 18px;
+  padding: 13px 14px 14px;
+  border-radius: 16px;
   background: var(--recess-1);
   border: 1px solid var(--card-line);
   overflow: hidden;
 }
 .solar-tile .ic {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
   display: grid;
   place-items: center;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.05);
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   transition: color 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 /* When `.glow` is on, the icon chip gets a subtle inner+outer halo that
@@ -1242,25 +1245,26 @@ body::after {
   text-overflow: ellipsis;
 }
 .solar-tile .value {
-  margin-top: 4px;
-  font-size: 30px;
+  margin-top: 2px;
+  font-size: 26px;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.03em;
   color: var(--ink);
+  line-height: 1.05;
 }
 .solar-tile .value .u {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   color: var(--ink-mute);
-  margin-left: 4px;
+  margin-left: 3px;
   font-family: var(--mono);
   letter-spacing: 0.06em;
 }
 .solar-tile .sub {
-  margin-top: 4px;
+  margin-top: 3px;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9.5px;
   color: var(--ink-mute);
   letter-spacing: 0.08em;
   white-space: nowrap;
@@ -1284,6 +1288,63 @@ body::after {
 .solar-tile.grid .bar-fill { background: var(--grad-blue); }
 .solar-tile.battery .bar-fill { background: var(--grad-green); }
 .solar-tile.unavail { opacity: 0.4; }
+
+/* ─── Scenes card (span 4, next to Solar tiles) ─────────── */
+.scene-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.scene-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 12px;
+  border-radius: 14px;
+  background: var(--recess-1);
+  border: 1px solid var(--card-line);
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.scene-row:hover {
+  border-color: var(--card-line-hi);
+  transform: translateY(-1px);
+}
+.scene-row.on {
+  background: linear-gradient(135deg, rgba(155, 77, 255, 0.20) 0%, rgba(231, 79, 180, 0.12) 100%);
+  border-color: rgba(155, 77, 255, 0.45);
+  box-shadow: 0 0 18px rgba(155, 77, 255, 0.18);
+}
+.scene-ic {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  display: grid;
+  place-items: center;
+  background: var(--recess-2);
+  color: var(--ink-soft);
+  border: 1px solid var(--card-line);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+.scene-row.on .scene-ic {
+  background: linear-gradient(135deg, var(--purple), var(--magenta));
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 0 14px rgba(155, 77, 255, 0.4);
+}
+.scene-meta { flex: 1; min-width: 0; }
+.scene-name {
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+.scene-sub {
+  margin-top: 1px;
+  font-size: 9px;
+}
+.scene-row.on .scene-sub { color: rgba(255, 255, 255, 0.8); }
 
 /* ─── Media player ──────────────────────────────────────── */
 .media-top { display: flex; gap: 16px; align-items: center; }
@@ -1732,6 +1793,7 @@ body::after {
   .span-doorbell { grid-column: span 8 !important; }
   .span-security { grid-column: span 8 !important; }
   .span-solar { grid-column: span 8 !important; }
+  .span-scenes { grid-column: span 8 !important; }
   .span-media { grid-column: span 8 !important; }
   .span-ac { grid-column: span 4 !important; }
   .span-lamp { grid-column: span 4 !important; }
@@ -1742,7 +1804,7 @@ body::after {
   .app { grid-template-columns: 1fr; padding: 14px; gap: 14px; }
   .rail { display: none; }
   .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .span-doorbell, .span-security, .span-solar, .span-media, .span-ac, .span-lamp, .span-alerts {
+  .span-doorbell, .span-security, .span-solar, .span-scenes, .span-media, .span-ac, .span-lamp, .span-alerts {
     grid-column: span 4 !important;
   }
   .clock { display: none; }
