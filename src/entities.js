@@ -49,7 +49,7 @@ export const ENTITIES = {
   /* ─── Media · Climate · Lamp ─────────────────────────────── */
   media: "media_player.living_room_2",   // "Lounge TV" — LG WebOS
   climate: "climate.living_room_ac",     // "Living room AC"
-  lamp: "light.russel_lamp",             // "Russel Lamp" (on/off only — no brightness)
+  lamp: "switch.kitchen_pendant",        // "Kitchen Pendant" (switch.* — toggle only)
 };
 
 /* ─── Curated binary_sensors that bubble up into the alerts feed.
