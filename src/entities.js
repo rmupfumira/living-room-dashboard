@@ -46,6 +46,9 @@ export const ENTITIES = {
     selfSufficiency: "sensor.off_grid_percentage_today", // %
   },
 
+  /* ─── Weather ────────────────────────────────────────────── */
+  weather: "weather.pirateweather",
+
   /* ─── Media · Climate · Lamp ─────────────────────────────── */
   media: "media_player.living_room_2",   // "Lounge TV" — LG WebOS
   climate: "climate.living_room_ac",     // "Living room AC"

@@ -604,9 +604,190 @@ body::after {
   font-weight: 600;
 }
 
-/* ─── Doorbell card ─────────────────────────────────────── */
-/* Flex column — camera feed flexes to fill the space left by the actions
-   block, so the card matches whatever its row-mate (Security) is tall. */
+/* ─── Clock + Weather card (replaces doorbell hero) ──────── */
+.cw {
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  gap: 28px;
+  padding: 28px 32px;
+  /* subtle purple glow at top-left, cyan at bottom-right */
+  background:
+    radial-gradient(420px 280px at 0% 0%, rgba(155, 77, 255, 0.10), transparent 60%),
+    radial-gradient(420px 320px at 100% 100%, rgba(56, 163, 255, 0.10), transparent 60%),
+    var(--card-bg);
+}
+
+/* ── LEFT: clock ── */
+.cw-clock {
+  flex: 1.05;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 0;
+}
+.cw-day { color: var(--ink-soft); }
+.cw-tz { margin-top: 14px; color: var(--ink-faint); }
+.cw-time {
+  display: flex;
+  align-items: baseline;
+  margin-top: 10px;
+  position: relative;
+}
+.cw-hm {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: clamp(72px, 11vw, 132px);
+  letter-spacing: -0.045em;
+  line-height: 0.85;
+  font-variant-numeric: tabular-nums;
+  background: linear-gradient(180deg, #ffffff 0%, #c8cad6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.cw-ss {
+  font-family: var(--mono);
+  font-weight: 600;
+  font-size: clamp(20px, 2.2vw, 28px);
+  color: var(--ink-faint);
+  margin-left: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── DIVIDER ── */
+.cw-divider {
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--card-line) 20%,
+    var(--card-line-hi) 50%,
+    var(--card-line) 80%,
+    transparent 100%
+  );
+  flex-shrink: 0;
+}
+
+/* ── RIGHT: weather ── */
+.cw-weather {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  min-width: 0;
+}
+.cw-w-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cw-w-main {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: 1;
+}
+.cw-w-ic {
+  flex-shrink: 0;
+  width: 92px;
+  height: 92px;
+  border-radius: 22px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(circle at 35% 30%, rgba(56, 163, 255, 0.25), rgba(155, 77, 255, 0.1) 65%, transparent);
+  border: 1px solid rgba(56, 163, 255, 0.25);
+  color: #d9eaff;
+  box-shadow:
+    0 0 28px rgba(56, 163, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+.cw-w-ic.unavail {
+  background: var(--recess-1);
+  border-color: var(--card-line);
+  color: var(--ink-faint);
+  box-shadow: none;
+}
+.cw-w-temp-wrap { min-width: 0; }
+.cw-w-temp {
+  font-size: clamp(48px, 6vw, 72px);
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  background: linear-gradient(135deg, #ffffff 0%, #d9d9e6 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.cw-w-temp .u {
+  font-size: 0.4em;
+  font-weight: 700;
+  color: var(--ink-mute);
+  margin-left: 6px;
+  -webkit-text-fill-color: var(--ink-mute);
+}
+.cw-w-cond {
+  margin-top: 2px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+
+/* ── stats grid (2x2) ── */
+.cw-w-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 4px;
+}
+.cw-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: var(--recess-1);
+  border: 1px solid var(--card-line);
+}
+.cw-stat-ic {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--recess-2);
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+.cw-stat-v {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+}
+.cw-stat-v .u {
+  font-weight: 500;
+  font-size: 10px;
+  color: var(--ink-mute);
+  letter-spacing: 0.08em;
+  margin-left: 2px;
+}
+
+/* responsive — fold the divider when narrow */
+@media (max-width: 880px) {
+  .cw { flex-direction: column; gap: 18px; padding: 22px; }
+  .cw-divider { width: auto; height: 1px; background: linear-gradient(90deg, transparent, var(--card-line-hi), transparent); }
+  .cw-clock, .cw-weather { flex: none; }
+}
+
+/* ─── (legacy) Doorbell card — kept for the source file referenced
+       if anyone reverts. Not used by the current App.jsx. ─────── */
 .doorbell { padding: 0; display: flex; flex-direction: column; }
 .db-feed {
   position: relative;
