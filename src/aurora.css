@@ -672,7 +672,7 @@ body::after {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  margin: 12px 0 18px;
+  margin: 8px 0 14px;
   flex: 1;
 }
 .wc-hero-left {
@@ -711,12 +711,69 @@ body::after {
 }
 .wc-hero-ic.unavail { color: var(--ink-faint) !important; filter: none; opacity: 0.4; }
 
+/* ── compact stats strip — fills the gap between hero and forecast ── */
+.wc-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.wc-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--recess-1);
+  border: 1px solid var(--card-line);
+  min-width: 0;
+}
+.wc-stat-ic {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background:
+    radial-gradient(circle at 35% 30%, color-mix(in oklch, currentColor 30%, transparent), transparent 65%),
+    var(--recess-2);
+  border: 1px solid color-mix(in oklch, currentColor 30%, transparent);
+  flex-shrink: 0;
+}
+.wc-stat-v {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.wc-stat-v .u {
+  font-size: 9px;
+  font-weight: 600;
+  color: var(--ink-mute);
+  margin-left: 3px;
+  letter-spacing: 0.06em;
+}
+.wc-stat-l {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .wc-forecast-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 16px;
-  margin-bottom: 12px;
+  padding-top: 14px;
+  margin-bottom: 10px;
   border-top: 1px solid var(--card-line);
 }
 .wc-forecast {

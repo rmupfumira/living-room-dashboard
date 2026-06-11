@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { Sun, Moon, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, CloudSun, Wind, Snowflake, MapPin } from "lucide-react";
+import { Sun, Moon, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, CloudSun, Wind, Snowflake, MapPin, Droplets, Gauge, Eye, Compass } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity } from "../ha/HaContext";
 import { useForecast } from "../ha/useForecast";
@@ -46,6 +46,13 @@ export default function WeatherCard() {
   const tempInt = Number.isFinite(a.temperature) ? Math.round(a.temperature) : null;
   const unavail = !ent || cond === "unavailable";
 
+  // Live conditions for the stats strip.
+  const humidity = Number.isFinite(a.humidity) ? Math.round(a.humidity) : null;
+  const wind = Number.isFinite(a.wind_speed) ? Math.round(a.wind_speed) : null;
+  const windDir = bearingToCardinal(a.wind_bearing);
+  const pressure = Number.isFinite(a.pressure) ? Math.round(a.pressure) : null;
+  const visibility = Number.isFinite(a.visibility) ? a.visibility.toFixed(1) : null;
+
   // Take up to 7 days. Some integrations include today as forecast[0], some don't.
   const days = useMemo(() => forecast.slice(0, 7), [forecast]);
 
@@ -72,6 +79,55 @@ export default function WeatherCard() {
           </div>
           <div className={"wc-hero-ic" + (unavail ? " unavail" : "")} style={{ color }}>
             <Icon size={100} strokeWidth={1.3} />
+          </div>
+        </div>
+
+        {/* ── Compact stats strip ── */}
+        <div className="wc-stats">
+          <div className="wc-stat">
+            <div className="wc-stat-ic" style={{ color: "#38a3ff" }}>
+              <Droplets size={14} strokeWidth={2} />
+            </div>
+            <div>
+              <div className="wc-stat-v">{humidity != null ? `${humidity}%` : "—"}</div>
+              <div className="wc-stat-l">Humidity</div>
+            </div>
+          </div>
+          <div className="wc-stat">
+            <div className="wc-stat-ic" style={{ color: "#46e0d2" }}>
+              <Wind size={14} strokeWidth={2} />
+            </div>
+            <div>
+              <div className="wc-stat-v">
+                {wind != null ? wind : "—"}
+                <span className="u">km/h</span>
+              </div>
+              <div className="wc-stat-l">Wind {windDir}</div>
+            </div>
+          </div>
+          <div className="wc-stat">
+            <div className="wc-stat-ic" style={{ color: "#b8f24a" }}>
+              <Gauge size={14} strokeWidth={2} />
+            </div>
+            <div>
+              <div className="wc-stat-v">
+                {pressure != null ? pressure : "—"}
+                <span className="u">hPa</span>
+              </div>
+              <div className="wc-stat-l">Pressure</div>
+            </div>
+          </div>
+          <div className="wc-stat">
+            <div className="wc-stat-ic" style={{ color: "#ffc46b" }}>
+              <Eye size={14} strokeWidth={2} />
+            </div>
+            <div>
+              <div className="wc-stat-v">
+                {visibility != null ? visibility : "—"}
+                <span className="u">km</span>
+              </div>
+              <div className="wc-stat-l">Visibility</div>
+            </div>
           </div>
         </div>
 
