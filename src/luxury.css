@@ -210,6 +210,40 @@ body {
 }
 .rail-spacer { flex: 1; }
 
+/* big refresh — generous touch target for the wall panel */
+.rail-refresh {
+  width: 66px;
+  height: 72px;
+  margin-bottom: 6px;
+  border-radius: var(--r-md);
+  background: var(--gold-08);
+  border: 1px solid var(--gold-30);
+  color: var(--gold);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+}
+.rail-refresh span {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+.rail-refresh:hover {
+  background: var(--gold-15);
+  box-shadow: var(--gold-glow-soft);
+}
+.rail-refresh:active svg {
+  animation: refresh-spin 0.5s ease-out;
+}
+@keyframes refresh-spin {
+  from { transform: rotate(0); }
+  to { transform: rotate(360deg); }
+}
+
 /* main column: top bar · mid · lower · scenes */
 .lux-main {
   display: grid;

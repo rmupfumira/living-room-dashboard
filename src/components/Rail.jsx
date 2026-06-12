@@ -48,8 +48,8 @@ export default function Rail({ view, onPick }) {
         </button>
       ))}
       <div className="rail-spacer" />
-      <button type="button" className="rail-item" onClick={hardReload} aria-label="Refresh" title="Hard reload">
-        <RefreshCw size={18} strokeWidth={2} />
+      <button type="button" className="rail-refresh" onClick={hardReload} aria-label="Refresh" title="Hard reload">
+        <RefreshCw size={26} strokeWidth={2.2} />
         <span>Refresh</span>
       </button>
       <button type="button" className="rail-item" aria-label="Settings">
