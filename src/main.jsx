@@ -22,7 +22,13 @@ function applyScale() {
   // Fit to BOTH axes: the layout is designed for ~1600×1000, so scale by the
   // smaller ratio. This keeps a tall 3:2 kitchen panel and a short 16:9 FHD
   // panel both inside the viewport — no vertical overflow on the wider screen.
-  const z = Math.max(1, Math.min(1.8, Math.min(window.innerWidth / DESIGN_W, window.innerHeight / DESIGN_H)));
+  //
+  // The lower bound MUST be able to drop below 1.0: when the usable height is
+  // less than the design height (e.g. an FHD panel shown in a browser tab where
+  // the address bar eats ~140px, leaving ~940px), zoom needs to shrink to ~0.94
+  // so the 1000px-tall canvas still fits. A 1.0 floor would force overflow +
+  // scrolling. 0.4 is just a sanity floor so a tiny window doesn't vanish.
+  const z = Math.max(0.4, Math.min(1.8, Math.min(window.innerWidth / DESIGN_W, window.innerHeight / DESIGN_H)));
   const root = document.documentElement;
   root.style.zoom = String(z);
   root.style.setProperty("--app-w", window.innerWidth / z + "px");
