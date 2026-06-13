@@ -7,6 +7,7 @@ import CamerasCard from "./components/CamerasCard";
 import KitchenCard from "./components/KitchenCard";
 import SolarCard from "./components/SolarCard";
 import MediaCard from "./components/MediaCard";
+import LaundryCard from "./components/LaundryCard";
 import GeyserCard from "./components/GeyserCard";
 import SecurityControls from "./components/SecurityControls";
 import ScenesBar from "./components/ScenesBar";
@@ -73,6 +74,7 @@ export default function App() {
 
               <div className="lux-col">
                 <SolarCard />
+                <LaundryCard />
                 <MediaCard onToast={fireToast} />
               </div>
             </div>

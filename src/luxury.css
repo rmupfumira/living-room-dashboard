@@ -676,6 +676,47 @@ body {
 }
 .sstat .v .u { font-size: 13px; font-weight: 500; color: var(--ink-mute); margin-left: 2px; }
 
+/* ─── laundry status (washer + dryer) ───────────────────── */
+.laundry {
+  flex-shrink: 0;
+  background: var(--surf-1);
+  box-shadow: var(--el-1);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.laundry-head { display: flex; align-items: center; gap: 9px; }
+.laundry-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.laundry-tile {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 15px;
+  border-radius: var(--r-md);
+  background: var(--recess);
+}
+.laundry-tile.running {
+  background: radial-gradient(180px 110px at 30% 0%, var(--gold-08), transparent 70%), var(--recess-2);
+  box-shadow: var(--gold-glow-soft);
+}
+.laundry-ic {
+  width: 46px; height: 46px; border-radius: 13px; display: grid; place-items: center;
+  background: var(--recess-2); color: var(--ink-mute); flex-shrink: 0; transition: all 0.2s;
+}
+.laundry-tile.running .laundry-ic { color: var(--gold); background: var(--gold-08); box-shadow: var(--gold-glow-soft); }
+.laundry-meta { flex: 1; min-width: 0; }
+.laundry-n { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.laundry-s { font-size: 13.5px; font-weight: 600; color: var(--ink-faint); margin-top: 1px; }
+.laundry-tile.running .laundry-s { color: var(--gold-bright); }
+.laundry-done {
+  width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; flex-shrink: 0;
+  background: rgba(63, 185, 80, 0.14); color: var(--success);
+}
+.laundry-tile .led { position: absolute; top: 12px; right: 12px; }
+
 /* media — with empty state (correction 8) */
 .media {
   flex: 1;

@@ -102,6 +102,14 @@ export const ENTITIES = {
     { id: "entArea", name: "Ent. Area", icon: "lock", entity: "lock.ent_area", kind: "lock" },
   ],
 
+  /* ─── Laundry status (read-only) ─────────────────────────── */
+  /* Both are input_select helpers with options running/finished — the user's
+     curated appliance state machines (LG washer + dryer). */
+  laundry: [
+    { id: "washer", name: "Washer", icon: "washing-machine", entity: "input_select.washing_maschine_state", finished: "input_datetime.washing_machine_finished_timestamp" },
+    { id: "dryer", name: "Dryer", icon: "wind", entity: "input_select.dryer_state", finished: "input_datetime.dryer_finished_timestamp" },
+  ],
+
   /* ─── Media · Lamp ───────────────────────────────────────── */
   media: "media_player.living_room_2",   // "Lounge TV" — LG WebOS
   lamp: "switch.kitchen_pendant",        // "Kitchen Pendant" (switch.* — toggle only)
