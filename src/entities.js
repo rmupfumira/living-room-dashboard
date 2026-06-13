@@ -84,7 +84,35 @@ export const ENTITIES = {
     ],
   },
 
-  /* ─── Geyser (replaces AC on the dashboard) ──────────────── */
+  /* ─── Per-room lighting (the lighting card swaps by route) ── */
+  lighting: {
+    kitchen: {
+      title: "Kitchen Lighting",
+      tiles: [
+        { id: "pendant", name: "Pendant", icon: "lamp-ceiling", entity: "switch.kitchen_pendant" },
+        { id: "down", name: "Downlighters", icon: "lightbulb", entity: "switch.kitchen_downlighter" },
+        { id: "peninsula", name: "Peninsula", icon: "lightbulb", entity: "switch.kitchen_peninsula_downlighter" },
+      ],
+      ledNav: true, // 4th tile → WLED control view
+    },
+    living: {
+      title: "Living Room Lighting",
+      tiles: [
+        { id: "pendant", name: "Pendant", icon: "lamp-ceiling", entity: "switch.dining_room_pendant" },
+        { id: "wall", name: "Wall Light", icon: "lightbulb", entity: "switch.living_room_wall_light" },
+        { id: "down", name: "Downlighters", icon: "lightbulb", entity: "switch.living_room_downlighters" },
+        { id: "rgb", name: "RGB Lights", icon: "lightbulb", entity: "light.living_room_lights_rgb" },
+      ],
+      ledNav: false,
+    },
+  },
+
+  /* ─── Per-room climate (kitchen → geyser, living → AC) ────── */
+  climate: {
+    living: { ac: "climate.living_room_ac", temp: "sensor.living_room_remote_temperature" },
+  },
+
+  /* ─── Geyser (kitchen climate slot) ──────────────────────── */
   geyser: {
     toggle: "switch.geyser",                              // on/off
     currentTemp: "sensor.geyserwise_tse_water_temperature", // °C actual

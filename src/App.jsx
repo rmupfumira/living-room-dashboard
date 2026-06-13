@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useHA } from "./ha/HaContext";
+import { ENTITIES } from "./entities";
 import Rail from "./components/Rail";
 import StatusBar from "./components/StatusBar";
 import SecurityDrawer from "./components/SecurityDrawer";
 import CamerasCard from "./components/CamerasCard";
-import KitchenCard from "./components/KitchenCard";
+import LightingCard from "./components/LightingCard";
 import SolarCard from "./components/SolarCard";
 import MediaCard from "./components/MediaCard";
 import LaundryCard from "./components/LaundryCard";
 import GeyserCard from "./components/GeyserCard";
+import ClimateCard from "./components/ClimateCard";
 import SecurityControls from "./components/SecurityControls";
 import ScenesBar from "./components/ScenesBar";
 import LightingView from "./components/LightingView";
@@ -94,8 +96,20 @@ export default function App() {
               </div>
 
               <div className="lux-col">
-                <KitchenCard onToast={fireToast} onOpenLighting={() => setSubview("lighting")} />
-                <GeyserCard onToast={fireToast} />
+                <LightingCard
+                  config={ENTITIES.lighting[room]}
+                  onToast={fireToast}
+                  onOpenLighting={() => setSubview("lighting")}
+                />
+                {room === "living" ? (
+                  <ClimateCard
+                    acEntity={ENTITIES.climate.living.ac}
+                    tempEntity={ENTITIES.climate.living.temp}
+                    onToast={fireToast}
+                  />
+                ) : (
+                  <GeyserCard onToast={fireToast} />
+                )}
                 <SecurityControls onToast={fireToast} />
               </div>
 
