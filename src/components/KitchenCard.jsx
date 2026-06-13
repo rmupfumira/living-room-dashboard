@@ -31,8 +31,10 @@ function SwitchStatus({ name, entity, Icon, onToast }) {
         if ((e.key === "Enter" || e.key === " ") && !unavail) toggle();
       }}
     >
-      <div className="klx-ic">
-        <Icon size={32} strokeWidth={2} />
+      <div className="klx-top">
+        <div className="klx-ic">
+          <Icon size={26} strokeWidth={2} />
+        </div>
       </div>
       <div>
         <div className="klx-n">{name}</div>
@@ -58,7 +60,7 @@ export default function KitchenCard({ onToast, onOpenLighting }) {
         <span className="sect-title">Kitchen Lighting</span>
       </div>
 
-      <div className="klx-grid2">
+      <div className="klx-row">
         {ENTITIES.kitchen.switches.map((sw) => (
           <SwitchStatus
             key={sw.id}
@@ -80,10 +82,10 @@ export default function KitchenCard({ onToast, onOpenLighting }) {
         >
           <div className="klx-top">
             <div className="klx-ic">
-              <Zap size={32} strokeWidth={2} />
+              <Zap size={26} strokeWidth={2} />
             </div>
             <div className="klx-nav-arrow">
-              <ChevronRight size={24} strokeWidth={2.4} />
+              <ChevronRight size={22} strokeWidth={2.4} />
             </div>
           </div>
           <div>

@@ -1,10 +1,7 @@
 import { useRef, useState } from "react";
 import { useHA } from "./ha/HaContext";
 import Rail from "./components/Rail";
-import TopClock from "./components/TopClock";
-import TopWeather from "./components/TopWeather";
-import TopAlerts from "./components/TopAlerts";
-import SecurityCard from "./components/SecurityCard";
+import StatusBar from "./components/StatusBar";
 import SecurityDrawer from "./components/SecurityDrawer";
 import CamerasCard from "./components/CamerasCard";
 import KitchenCard from "./components/KitchenCard";
@@ -18,17 +15,14 @@ import Toast from "./components/Toast";
 import OfflineOverlay from "./components/OfflineOverlay";
 
 /**
- * Luxury Gold kitchen command center — glanceable build.
+ * Luxury Gold kitchen command center — control-panel layout.
  *
- * Home view (single screen, designed for 3-5m viewing):
- *   TOP    Clock · Weather (temp + condition, tap → detail) · Alerts
- *   MID    [Security compact + Cameras] · Kitchen lighting (big ON/OFF + LED nav)
- *   LOWER  Solar (battery hero) · Media · Air Conditioner
- *   FOOT   Scenes (large quick-action targets)
+ *   STATUS BAR   time · weather · home · alerts          (one compact strip)
+ *   ZONE GRID    Cameras │ Lighting + Air Con │ Solar + Media
+ *   SCENES       Good Morning · Night · Guest · Movie     (large action cards)
  *
- * Sub-views replace the band layout:
- *   "lighting" — WLED control (brightness/colour/effects/strips)
- *   "weather"  — full conditions + 7-day forecast
+ * Security lives in the status bar (status + Secure) and a slide-out drawer.
+ * LED strips + weather detail are dedicated sub-views.
  */
 export default function App() {
   const { status, error, retry } = useHA();
@@ -59,24 +53,26 @@ export default function App() {
           <WeatherView onBack={() => setSubview(null)} />
         ) : (
           <>
-            <div className="lux-top">
-              <TopClock />
-              <TopWeather onOpen={() => setSubview("weather")} />
-              <TopAlerts />
-            </div>
+            <StatusBar
+              onOpenWeather={() => setSubview("weather")}
+              onOpenSecurity={() => setDrawerOpen(true)}
+              onToast={fireToast}
+            />
 
-            <div className="lux-mid">
-              <div className="mid-left">
-                <SecurityCard onToast={fireToast} onDetails={() => setDrawerOpen(true)} />
+            <div className="lux-grid">
+              <div className="lux-col">
                 <CamerasCard />
               </div>
-              <KitchenCard onToast={fireToast} onOpenLighting={() => setSubview("lighting")} />
-            </div>
 
-            <div className="lux-low">
-              <SolarCard />
-              <MediaCard onToast={fireToast} />
-              <ClimateCard onToast={fireToast} />
+              <div className="lux-col">
+                <KitchenCard onToast={fireToast} onOpenLighting={() => setSubview("lighting")} />
+                <ClimateCard onToast={fireToast} />
+              </div>
+
+              <div className="lux-col">
+                <SolarCard />
+                <MediaCard onToast={fireToast} />
+              </div>
             </div>
 
             <ScenesBar onToast={fireToast} />
