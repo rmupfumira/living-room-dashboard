@@ -7,20 +7,22 @@ import "./luxury.css";
 /**
  * Auto-fit the UI to the panel.
  *
- * The dashboard is laid out against a fixed "design canvas" width; we scale the
- * whole document with CSS zoom so it fills any panel resolution consistently —
- * a 2520-wide screen renders the same proportions as a 1600-wide one, just
- * bigger. Chromium (the kiosk browser) supports `zoom`; it scales layout so our
- * flex bands and clamp() type all follow.
+ * The layout is tuned for a fixed "design canvas" width; we scale the whole
+ * document with CSS zoom so it fills any panel resolution consistently.
  *
- * DESIGN_W is the width the layout is tuned for. Zoom is clamped so it never
- * shrinks below 1× (small screens render 1:1 and rely on the responsive rules)
- * and never blows up past 1.8× on ultra-wide panels.
+ * IMPORTANT: `zoom` and `100vh` don't mix — vh units resolve against the real
+ * viewport and then get multiplied by the zoom factor, which would make the
+ * app taller/wider than the screen and overflow. So we compute the app box as
+ * (viewport ÷ zoom) and feed it through CSS vars; after the browser applies
+ * zoom, the box lands back at the true screen size exactly.
  */
 const DESIGN_W = 1600;
 function applyScale() {
   const z = Math.max(1, Math.min(1.8, window.innerWidth / DESIGN_W));
-  document.documentElement.style.zoom = String(z);
+  const root = document.documentElement;
+  root.style.zoom = String(z);
+  root.style.setProperty("--app-w", window.innerWidth / z + "px");
+  root.style.setProperty("--app-h", window.innerHeight / z + "px");
 }
 applyScale();
 window.addEventListener("resize", applyScale);

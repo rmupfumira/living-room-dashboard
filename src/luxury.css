@@ -65,7 +65,7 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-#root { height: 100vh; }
+#root { width: var(--app-w, 100vw); height: var(--app-h, 100vh); }
 ::selection { background: rgba(212, 175, 55, 0.3); color: var(--ink); }
 *::-webkit-scrollbar { width: 7px; height: 7px; }
 *::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.08); border-radius: 99px; }
@@ -156,7 +156,8 @@ body {
   grid-template-columns: 96px minmax(0, 1fr);
   gap: 14px;
   padding: 14px;
-  height: 100vh;
+  width: var(--app-w, 100vw);
+  height: var(--app-h, 100vh);
 }
 
 /* ── rail — room nav with strong active state (correction 4) ── */
