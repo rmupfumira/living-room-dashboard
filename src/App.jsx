@@ -61,7 +61,7 @@ export default function App() {
 
             <div className="lux-grid">
               <div className="lux-col">
-                <CamerasCard />
+                <CamerasCard onToast={fireToast} />
               </div>
 
               <div className="lux-col">

@@ -525,7 +525,7 @@ body {
 .sec-item-s { font-size: 13px; font-weight: 500; color: var(--ink-mute); margin-top: 2px; }
 .sec-item.alert-state .sec-item-s { color: var(--warning); }
 
-/* single camera (correction 2) */
+/* cameras — 3 stacked landscape tiles (correction 5) */
 .cams {
   flex: 1;
   background: var(--surf-1);
@@ -537,42 +537,38 @@ body {
   min-height: 0;
 }
 .cams-head { display: flex; align-items: center; gap: 9px; }
-.cam-stage {
+.cam-list { flex: 1; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.cam-tile {
   flex: 1;
   position: relative;
   border-radius: var(--r-md);
   overflow: hidden;
   background: #0a0a0a;
   min-height: 0;
+  cursor: pointer;
 }
-.cam-stage img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cam-tile img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .cam-fallback {
   width: 100%; height: 100%; display: grid; place-items: center;
   color: var(--ink-faint); font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
 }
+.cam-live-pill {
+  position: absolute; top: 10px; right: 10px;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 9px; border-radius: 99px; background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+  font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #fff;
+}
 .cam-overlay {
   position: absolute; inset: 0; display: flex; align-items: flex-end; justify-content: space-between;
-  padding: 12px 14px; background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.6) 100%);
+  padding: 12px 14px; background: linear-gradient(180deg, transparent 55%, rgba(0, 0, 0, 0.65) 100%);
   pointer-events: none;
 }
-.cam-nm { font-size: 16px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); }
-.cam-live { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: #fff; }
-.cam-chips { display: flex; gap: 10px; }
-.cam-chip {
-  flex: 1;
-  padding: 15px 10px;
-  border-radius: var(--r-md);
-  border: none;
-  background: var(--recess);
-  color: var(--ink-mute);
-  font-family: var(--font);
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.18s;
+.cam-nm { font-size: 17px; font-weight: 600; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7); }
+.cam-go {
+  width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: rgba(255, 255, 255, 0.16); color: #fff; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
 }
-.cam-chip:hover { color: var(--ink-soft); background: var(--recess-2); }
-.cam-chip.on { color: var(--gold); background: var(--gold-12); box-shadow: var(--gold-glow-soft); }
 
 /* kitchen lighting — COMPACT row of switch status + LED nav (corrections 3, 4, 10) */
 .klx {
