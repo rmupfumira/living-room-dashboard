@@ -91,11 +91,12 @@ export const ENTITIES = {
     targetTemp: "input_number.geyser_temperature",        // °C setpoint
   },
 
-  /* ─── Security controls shown on the dashboard (6 tiles) ──── */
+  /* ─── Security controls shown on the dashboard (7 tiles) ──── */
   securityControls: [
     { id: "outdoorAlarm", name: "Outdoor Alarm", icon: "siren", entity: "alarm_control_panel.partition_outdoor", kind: "alarm" },
     { id: "indoorAlarm", name: "Indoor Alarm", icon: "shield", entity: "alarm_control_panel.partition_indoor", kind: "alarm" },
     { id: "gate", name: "Gate", icon: "fence", entity: "cover.centurion_gate_gate", kind: "cover" },
+    { id: "garage", name: "Garage Door", icon: "warehouse", entity: "cover.garage_door_z2m", kind: "cover" },
     { id: "frontDoor", name: "Front Door", icon: "door-closed", entity: "lock.front_door_lock", kind: "lock" },
     { id: "screenGate", name: "Screen Gate", icon: "fence", entity: "cover.screen_gate", kind: "cover" },
     { id: "entArea", name: "Ent. Area", icon: "lock", entity: "lock.ent_area", kind: "lock" },

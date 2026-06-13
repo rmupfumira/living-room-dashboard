@@ -788,7 +788,7 @@ body {
 .secctls-grid {
   flex: 1;
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   grid-template-rows: 1fr 1fr;
   gap: 12px;
   min-height: 0;
@@ -797,8 +797,8 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: 8px;
+  padding: 12px 14px;
   border-radius: var(--r-md);
   background: var(--recess);
   cursor: pointer;
@@ -811,14 +811,14 @@ body {
 }
 .secctl.unavail { opacity: 0.45; pointer-events: none; }
 .secctl-ic {
-  width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center;
+  width: 44px; height: 44px; border-radius: 13px; display: grid; place-items: center;
   background: var(--recess-2); color: var(--ink-mute); transition: all 0.2s; flex-shrink: 0;
 }
 .secctl.secure .secctl-ic { color: var(--gold); background: var(--gold-08); box-shadow: var(--gold-glow-soft); }
 .secctl.open .secctl-ic { color: var(--warning); }
-.secctl-n { font-size: 18px; font-weight: 600; letter-spacing: -0.015em; }
+.secctl-n { font-size: 16px; font-weight: 600; letter-spacing: -0.015em; line-height: 1.15; }
 .secctl-s {
-  font-size: 15px; font-weight: 600; margin-top: 1px; color: var(--ink-faint);
+  font-size: 13.5px; font-weight: 600; margin-top: 2px; color: var(--ink-faint);
 }
 .secctl.secure .secctl-s { color: var(--gold-bright); }
 .secctl.open .secctl-s { color: var(--warning); }
