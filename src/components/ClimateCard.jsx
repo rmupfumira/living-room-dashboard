@@ -57,20 +57,27 @@ export default function ClimateCard({ acEntity, tempEntity, onToast }) {
       </div>
 
       <div className="clim-main">
-        <div className="clim-dial-row">
+        {/* Current room temperature — the big glanceable number */}
+        <div className="clim-dial">
+          <div>
+            <div className="clim-room tabular">
+              {current != null ? current.toFixed(1) : "—"}
+              <span className="u">°</span>
+            </div>
+            <div className="clim-room-lbl">Room temperature</div>
+          </div>
+        </div>
+
+        {/* Target setpoint with steppers */}
+        <div className="clim-target">
           <button type="button" className="clim-step" onClick={() => adjust(-stepT)} disabled={unavail || !isOn} aria-label="cooler">
             <Minus size={20} strokeWidth={2.4} />
           </button>
-          <div className="clim-dial">
-            <div>
-              <div className="clim-t tabular">
-                {Number.isFinite(target) ? Math.round(target) : "—"}
-                <span className="u">°</span>
-              </div>
-              <div className="clim-cur">
-                {unavail ? "Unavailable" : current != null ? `Room ${current.toFixed(1)}°` : isOn ? hvacMode.replace("_", " ") : "Off"}
-              </div>
+          <div className="clim-target-mid">
+            <div className="clim-target-v tabular">
+              {Number.isFinite(target) ? Math.round(target) : "—"}°
             </div>
+            <div className="clim-target-l">{isOn ? `Target · ${hvacMode.replace("_", " ")}` : "Target · Off"}</div>
           </div>
           <button type="button" className="clim-step" onClick={() => adjust(stepT)} disabled={unavail || !isOn} aria-label="warmer">
             <Plus size={20} strokeWidth={2.4} />
