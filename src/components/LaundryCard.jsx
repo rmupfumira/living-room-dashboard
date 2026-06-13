@@ -1,7 +1,7 @@
 import * as L from "lucide-react";
 import { Shirt, Check } from "lucide-react";
 import { ENTITIES } from "../entities";
-import { useEntity } from "../ha/HaContext";
+import { useEntity, useHA } from "../ha/HaContext";
 
 function toPascal(name) {
   return String(name).split(/[-_]/).map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join("");
@@ -49,8 +49,15 @@ function ApplianceTile({ item }) {
   );
 }
 
-/** Compact laundry status card — Washer + Dryer. */
+/**
+ * Compact laundry status card — Washer + Dryer.
+ * Only shown while a cycle is running; hides entirely once both are finished.
+ */
 export default function LaundryCard() {
+  const { entities } = useHA();
+  const anyRunning = ENTITIES.laundry.some((i) => entities[i.entity]?.state === "running");
+  if (!anyRunning) return null;
+
   return (
     <div className="laundry rise">
       <div className="laundry-head">

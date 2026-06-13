@@ -14,7 +14,7 @@ import ClimateCard from "./components/ClimateCard";
 import SecurityControls from "./components/SecurityControls";
 import ScenesBar from "./components/ScenesBar";
 import LightingView from "./components/LightingView";
-import WeatherView from "./components/WeatherView";
+import WeatherModal from "./components/WeatherModal";
 import GuestWifi from "./components/GuestWifi";
 import Toast from "./components/Toast";
 import OfflineOverlay from "./components/OfflineOverlay";
@@ -39,9 +39,10 @@ function roomFromPath() {
 export default function App() {
   const { status, error, retry } = useHA();
   const [room, setRoom] = useState(roomFromPath); // "kitchen" | "living"
-  const [subview, setSubview] = useState(null); // null | "lighting" | "weather"
+  const [subview, setSubview] = useState(null); // null | "lighting"
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [wifiOpen, setWifiOpen] = useState(false);
+  const [weatherOpen, setWeatherOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
 
@@ -82,12 +83,10 @@ export default function App() {
       <div className="lux-main">
         {subview === "lighting" ? (
           <LightingView onBack={() => setSubview(null)} onToast={fireToast} />
-        ) : subview === "weather" ? (
-          <WeatherView onBack={() => setSubview(null)} />
         ) : (
           <>
             <StatusBar
-              onOpenWeather={() => setSubview("weather")}
+              onOpenWeather={() => setWeatherOpen(true)}
               onOpenSecurity={() => setDrawerOpen(true)}
               onToast={fireToast}
             />
@@ -129,6 +128,7 @@ export default function App() {
 
       <SecurityDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onToast={fireToast} />
       <GuestWifi open={wifiOpen} onClose={() => setWifiOpen(false)} />
+      <WeatherModal open={weatherOpen} onClose={() => setWeatherOpen(false)} />
       <Toast toast={toast} />
       <OfflineOverlay status={status} error={error} onRetry={retry} />
     </div>

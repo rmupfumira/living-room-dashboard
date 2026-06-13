@@ -1080,6 +1080,49 @@ body {
 .toast .ic { color: var(--gold); }
 @keyframes toast-up { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 
+/* ─── weather modal ─────────────────────────────────────── */
+.wx-backdrop {
+  position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: 24px;
+  background: rgba(7, 7, 7, 0.8); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  animation: fade-in 0.2s ease both;
+}
+.wx-modal {
+  position: relative; width: 100%; max-width: 720px;
+  background: var(--surf-2); border-radius: var(--r-xl);
+  box-shadow: var(--el-pop), 0 0 0 1px rgba(212, 175, 55, 0.14);
+  padding: 30px 34px 34px;
+  animation: toast-up 0.26s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.wx-close {
+  position: absolute; top: 18px; right: 18px;
+  width: 40px; height: 40px; border-radius: 12px; border: none;
+  background: var(--recess-2); color: var(--ink-soft); cursor: pointer; display: grid; place-items: center;
+}
+.wx-close:hover { color: var(--ink); }
+.wx-now { display: flex; align-items: center; gap: 24px; margin-bottom: 22px; }
+.wx-now-ic { color: var(--gold); filter: drop-shadow(0 2px 18px rgba(212, 175, 55, 0.45)); flex-shrink: 0; }
+.wx-loc { display: inline-flex; align-items: center; gap: 6px; color: var(--ink-mute); font-size: 13px; font-weight: 600; }
+.wx-loc svg { color: var(--ink-faint); }
+.wx-temp { font-size: 76px; font-weight: 600; letter-spacing: -0.04em; line-height: 1; font-variant-numeric: tabular-nums; margin-top: 4px; }
+.wx-cond { font-size: 20px; font-weight: 500; color: var(--ink-soft); margin-top: 2px; }
+.wx-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 22px; }
+.wx-stat { display: flex; align-items: center; gap: 11px; padding: 13px 15px; border-radius: var(--r-md); background: var(--recess); }
+.wx-stat-ic { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; background: var(--recess-2); color: var(--gold); flex-shrink: 0; }
+.wx-stat-v { font-size: 20px; font-weight: 600; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.wx-stat-v .u { font-size: 12px; font-weight: 500; color: var(--ink-mute); margin-left: 2px; }
+.wx-stat-k { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute); margin-top: 1px; }
+.wx-forecast-h { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 12px; }
+.wx-forecast { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 10px; }
+.wx-day {
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 14px 4px; border-radius: var(--r-md); background: var(--recess);
+}
+.wx-day.today { background: var(--gold-12); }
+.wx-day-d { font-size: 12px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-mute); }
+.wx-day.today .wx-day-d { color: var(--gold); }
+.wx-day-hi { font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.wx-day-lo { font-size: 13px; font-weight: 500; color: var(--ink-faint); font-variant-numeric: tabular-nums; margin-top: -4px; }
+
 /* ─── guest wifi modal ──────────────────────────────────── */
 .wifi-backdrop {
   position: fixed; inset: 0; z-index: 95; display: grid; place-items: center; padding: 24px;
