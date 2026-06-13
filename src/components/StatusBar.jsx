@@ -64,14 +64,16 @@ export default function StatusBar({ onOpenWeather, onOpenSecurity, onToast }) {
   const garage = entities[ENTITIES.security.garage];
   const gate = entities[ENTITIES.security.gate];
   const outdoor = entities[ENTITIES.security.outdoorAlarm];
-  const indoor = entities[ENTITIES.security.indoorAlarm];
   const entArea = entities[ENTITIES.security.entArea];
+  const frontDoor = entities[ENTITIES.security.frontDoorLock];
   const screen = entities[ENTITIES.security.screenGate];
   const isOpen = (e) => e && /^(open|opening)$/i.test(e.state);
   const isArmed = (e) => e && /^armed/i.test(e.state);
   const isLocked = (e) => e && e.state === "locked";
-  const armed = isArmed(outdoor) && isArmed(indoor);
-  const allClosed = !isOpen(garage) && !isOpen(gate) && !isOpen(screen) && isLocked(entArea);
+  // Indoor alarm is intentionally excluded — it stays disarmed while we're home.
+  const armed = isArmed(outdoor);
+  const allClosed =
+    !isOpen(garage) && !isOpen(gate) && !isOpen(screen) && isLocked(entArea) && isLocked(frontDoor);
   const secure = armed && allClosed;
 
   /* alerts */

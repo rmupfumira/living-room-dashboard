@@ -1,7 +1,7 @@
 import * as L from "lucide-react";
-import { Shield } from "lucide-react";
+import { Shield, ShieldCheck, AlertTriangle, Check } from "lucide-react";
 import { ENTITIES } from "../entities";
-import { useEntity } from "../ha/HaContext";
+import { useEntity, useHA } from "../ha/HaContext";
 import { useService } from "../ha/useService";
 
 function toPascal(name) {
@@ -9,34 +9,48 @@ function toPascal(name) {
 }
 
 /**
- * One security control tile. `kind` decides the service + the on/off semantics:
- *   alarm → armed/disarmed (arm_away / disarm)
- *   cover → open/closed (open_cover / close_cover)
- *   lock  → locked/unlocked (lock / unlock)
- * "active" (gold) state = armed / closed / locked — i.e. the secure state.
+ * Derive the secure/label/service semantics for one control from its raw state.
+ * Shared by the tile (rendering) and the card (overall "all secure" verdict).
+ *   alarm → armed/disarmed   cover → open/closed   lock → locked/unlocked
+ * secure === true means armed / closed / locked.
+ */
+function statusOf(ctl, state) {
+  const unavail = !state || state === "unavailable";
+  if (ctl.kind === "alarm") {
+    const secure = /^armed/i.test(state || "");
+    return { secure, unavail, label: secure ? "Armed" : "Disarmed" };
+  }
+  if (ctl.kind === "cover") {
+    const open = /^(open|opening)$/i.test(state || "");
+    return { secure: !open, unavail, label: open ? "Open" : "Closed" };
+  }
+  const locked = state === "locked";
+  return { secure: locked, unavail, label: locked ? "Locked" : "Unlocked" };
+}
+
+/**
+ * One security control tile. Visual state, loudest-first:
+ *   alert  (amber, pulsing)  → not secure, available, not ignored — needs attention
+ *   secure (calm green tint) → armed / closed / locked
+ *   muted                    → unavailable, or an `ignore` tile (e.g. indoor alarm)
  */
 function ControlTile({ ctl, onToast }) {
   const ent = useEntity(ctl.entity);
   const call = useService();
   const Icon = L[toPascal(ctl.icon)] || Shield;
-  const unavail = !ent || ent.state === "unavailable";
+  const { secure, unavail, label } = statusOf(ctl, ent?.state);
+  const alert = !secure && !unavail && !ctl.ignore;
+  const cls = unavail ? "muted" : alert ? "alert" : secure ? "secure" : "muted";
 
-  let secure, label, action;
-  if (ctl.kind === "alarm") {
-    secure = /^armed/i.test(ent?.state || "");
-    label = secure ? "Armed" : "Disarmed";
-    action = () => call("alarm_control_panel", secure ? "alarm_disarm" : "alarm_arm_away", {}, { entity_id: ctl.entity });
-  } else if (ctl.kind === "cover") {
-    const open = /^(open|opening)$/i.test(ent?.state || "");
-    secure = !open;
-    label = open ? "Open" : "Closed";
-    action = () => call("cover", open ? "close_cover" : "open_cover", {}, { entity_id: ctl.entity });
-  } else {
-    const locked = ent?.state === "locked";
-    secure = locked;
-    label = locked ? "Locked" : "Unlocked";
-    action = () => call("lock", locked ? "unlock" : "lock", {}, { entity_id: ctl.entity });
-  }
+  const action = () => {
+    if (ctl.kind === "alarm") {
+      call("alarm_control_panel", secure ? "alarm_disarm" : "alarm_arm_away", {}, { entity_id: ctl.entity });
+    } else if (ctl.kind === "cover") {
+      call("cover", secure ? "open_cover" : "close_cover", {}, { entity_id: ctl.entity });
+    } else {
+      call("lock", secure ? "unlock" : "lock", {}, { entity_id: ctl.entity });
+    }
+  };
 
   const toggle = () => {
     if (unavail) return;
@@ -46,7 +60,7 @@ function ControlTile({ ctl, onToast }) {
 
   return (
     <div
-      className={"secctl" + (secure ? " secure" : " open") + (unavail ? " unavail" : "")}
+      className={"secctl " + cls}
       onClick={toggle}
       role="button"
       tabIndex={unavail ? -1 : 0}
@@ -66,15 +80,42 @@ function ControlTile({ ctl, onToast }) {
 }
 
 /**
- * Security control grid (correction): outdoor + indoor alarm, gate,
- * front door lock, screen gate, entertainment area lock — 6 tap tiles.
+ * Security control grid: outdoor + indoor alarm, gate, garage, front door,
+ * screen gate, entertainment-area lock.
+ *
+ * The header is a glanceable verdict: a big green check + "All Secure" when
+ * every non-ignored control is armed/closed/locked, otherwise a loud amber
+ * banner naming what's still open/unlocked. The indoor alarm is excluded from
+ * the verdict (it stays disarmed while we're home).
  */
 export default function SecurityControls({ onToast }) {
+  const { entities } = useHA();
+
+  const watched = ENTITIES.securityControls.filter((c) => !c.ignore);
+  const openItems = watched.filter((c) => {
+    const { secure, unavail } = statusOf(c, entities[c.entity]?.state);
+    return !secure && !unavail;
+  });
+  const allSecure = openItems.length === 0;
+
   return (
-    <div className="secctls rise">
+    <div className={"secctls rise" + (allSecure ? " is-secure" : " is-alert")}>
       <div className="secctls-head">
         <Shield size={16} strokeWidth={2} color="var(--gold)" />
         <span className="sect-title">Security</span>
+        <div className={"secctls-verdict " + (allSecure ? "ok" : "warn")}>
+          {allSecure ? (
+            <>
+              <span className="secctls-check"><Check size={18} strokeWidth={3} /></span>
+              <span className="secctls-verdict-t"><ShieldCheck size={15} strokeWidth={2.4} /> All Secure</span>
+            </>
+          ) : (
+            <span className="secctls-verdict-t">
+              <AlertTriangle size={15} strokeWidth={2.4} />
+              {openItems.length} open · {openItems.map((c) => c.name).join(", ")}
+            </span>
+          )}
+        </div>
       </div>
       <div className="secctls-grid">
         {ENTITIES.securityControls.map((c) => (

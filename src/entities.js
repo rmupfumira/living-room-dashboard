@@ -26,6 +26,7 @@ export const ENTITIES = {
     outdoorAlarm: "alarm_control_panel.partition_outdoor",
     indoorAlarm: "alarm_control_panel.partition_indoor",
     entArea: "lock.ent_area",       // entertainment area door (it's a lock)
+    frontDoorLock: "lock.front_door_lock",
     screenGate: "cover.screen_gate",
     secureHomeScript: "script.secure_home",
   },
@@ -46,12 +47,13 @@ export const ENTITIES = {
     selfSufficiency: "sensor.off_grid_percentage_today", // %
   },
 
-  /* ─── Scenes (4 one-tap moods) ──────────────────────────── */
+  /* ─── Scenes (one-tap moods) ────────────────────────────── */
   scenes: [
     { id: "morning", name: "Good Morning", icon: "sunrise",      entity: "scene.good_morning" },
     { id: "night",   name: "Night",        icon: "moon",         entity: "scene.good_night" },
     { id: "guest",   name: "Guest",        icon: "users",        entity: "input_boolean.guest_mode" },
     { id: "movie",   name: "Movie",        icon: "clapperboard", entity: "input_boolean.movie_scene" },
+    { id: "silent",  name: "Silent",       icon: "volume-x",     entity: "input_boolean.dont_disturb" },
   ],
 
   /* ─── Weather ────────────────────────────────────────────── */
@@ -120,9 +122,12 @@ export const ENTITIES = {
   },
 
   /* ─── Security controls shown on the dashboard (7 tiles) ──── */
+  /* `ignore: true` → tile is still shown + tappable, but its state does NOT
+     count toward the "all secure" determination (the indoor alarm is meant to
+     stay disarmed while we're home, so it must never block the green check). */
   securityControls: [
     { id: "outdoorAlarm", name: "Outdoor Alarm", icon: "siren", entity: "alarm_control_panel.partition_outdoor", kind: "alarm" },
-    { id: "indoorAlarm", name: "Indoor Alarm", icon: "shield", entity: "alarm_control_panel.partition_indoor", kind: "alarm" },
+    { id: "indoorAlarm", name: "Indoor Alarm", icon: "shield", entity: "alarm_control_panel.partition_indoor", kind: "alarm", ignore: true },
     { id: "gate", name: "Gate", icon: "fence", entity: "cover.centurion_gate_gate", kind: "cover" },
     { id: "garage", name: "Garage Door", icon: "warehouse", entity: "cover.garage_door_z2m", kind: "cover" },
     { id: "frontDoor", name: "Front Door", icon: "door-closed", entity: "lock.front_door_lock", kind: "lock" },
