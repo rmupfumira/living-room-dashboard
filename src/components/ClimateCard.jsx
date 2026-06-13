@@ -3,15 +3,15 @@ import { ENTITIES } from "../entities";
 import { useEntity } from "../ha/HaContext";
 import { useService } from "../ha/useService";
 
+/* Power first, then the modes — reduced to a slim icon-only column (correction 9). */
 const MODES = [
-  { id: "cool", Icon: Snowflake, label: "Cool" },
-  { id: "heat", Icon: Flame, label: "Heat" },
-  { id: "fan_only", Icon: Fan, label: "Fan" },
-  { id: "dry", Icon: Wind, label: "Dry" },
-  { id: "auto", Icon: CircleGauge, label: "Auto" },
+  { id: "cool", Icon: Snowflake },
+  { id: "heat", Icon: Flame },
+  { id: "fan_only", Icon: Fan },
+  { id: "dry", Icon: Wind },
+  { id: "auto", Icon: CircleGauge },
 ];
 
-/** Living Room AC — circular dial + mode column + power. */
 export default function ClimateCard({ onToast }) {
   const ent = useEntity(ENTITIES.climate);
   const call = useService();
@@ -22,7 +22,7 @@ export default function ClimateCard({ onToast }) {
   const hvacMode = ent?.state || "off";
   const minT = Number(ent?.attributes?.min_temp) || 16;
   const maxT = Number(ent?.attributes?.max_temp) || 30;
-  const step = Number(ent?.attributes?.target_temp_step) || 1;
+  const stepT = Number(ent?.attributes?.target_temp_step) || 1;
   const isOn = hvacMode !== "off" && hvacMode !== "unavailable";
   const unavail = !ent || hvacMode === "unavailable";
 
@@ -42,50 +42,51 @@ export default function ClimateCard({ onToast }) {
   };
 
   return (
-    <div className="card rise clim">
-      <div className="clim-left">
-        <div className="clim-head">
-          <Thermometer size={15} strokeWidth={2} color="var(--gold)" />
-          <span className="sect-title">Air Conditioner</span>
-        </div>
+    <div className="clim rise">
+      <div className="clim-head">
+        <Thermometer size={15} strokeWidth={2} color="var(--gold)" />
+        <span className="sect-title">Air Conditioner</span>
+      </div>
+
+      <div className="clim-body">
         <div className="clim-dial-wrap">
-          <button type="button" className="clim-step" onClick={() => adjust(-step)} disabled={unavail || !isOn} aria-label="cooler">
-            <Minus size={15} strokeWidth={2.4} />
+          <button type="button" className="clim-step" onClick={() => adjust(-stepT)} disabled={unavail || !isOn} aria-label="cooler">
+            <Minus size={17} strokeWidth={2.4} />
           </button>
           <div className="clim-dial">
             <div>
               <div className="clim-t tabular">
                 {Number.isFinite(target) ? Math.round(target) : "—"}
-                <span className="u">°C</span>
+                <span className="u">°</span>
               </div>
               <div className="clim-cur">
-                {unavail ? "Unavailable" : current != null ? `Current ${current.toFixed(1)}°` : isOn ? hvacMode.replace("_", " ") : "Off"}
+                {unavail ? "Unavailable" : current != null ? `Now ${current.toFixed(1)}°` : isOn ? hvacMode.replace("_", " ") : "Off"}
               </div>
             </div>
           </div>
-          <button type="button" className="clim-step" onClick={() => adjust(step)} disabled={unavail || !isOn} aria-label="warmer">
-            <Plus size={15} strokeWidth={2.4} />
+          <button type="button" className="clim-step" onClick={() => adjust(stepT)} disabled={unavail || !isOn} aria-label="warmer">
+            <Plus size={17} strokeWidth={2.4} />
           </button>
         </div>
-      </div>
 
-      <div className="clim-modes">
-        <button type="button" className={"clim-mode" + (isOn ? " on" : "")} onClick={togglePower} disabled={unavail}>
-          <Power size={13} strokeWidth={2.2} />
-          Power
-        </button>
-        {MODES.map(({ id, Icon, label }) => (
-          <button
-            key={id}
-            type="button"
-            className={"clim-mode" + (hvacMode === id ? " on" : "")}
-            onClick={() => setMode(id)}
-            disabled={unavail}
-          >
-            <Icon size={13} strokeWidth={2} />
-            {label}
+        <div className="clim-modes">
+          <button type="button" className={"clim-mode" + (isOn ? " on" : "")} onClick={togglePower} disabled={unavail} aria-label="power" title="Power">
+            <Power size={16} strokeWidth={2.2} />
           </button>
-        ))}
+          {MODES.map(({ id, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              className={"clim-mode" + (hvacMode === id ? " on" : "")}
+              onClick={() => setMode(id)}
+              disabled={unavail}
+              aria-label={id}
+              title={id.replace("_", " ")}
+            >
+              <Icon size={16} strokeWidth={2} />
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { SkipBack, SkipForward, Play, Pause, Music, Volume2 } from "lucide-react";
+import { SkipBack, SkipForward, Play, Pause, Music, Volume2, Disc3 } from "lucide-react";
 import Led from "./Led";
 import { ENTITIES } from "../entities";
 import { useEntity } from "../ha/HaContext";
@@ -24,7 +24,8 @@ export default function MediaCard({ onToast }) {
 
   const playing = ent?.state === "playing";
   const duration = Number(ent?.attributes?.media_duration) || 0;
-  const title = ent?.attributes?.media_title || (ent?.state === "off" ? "Powered off" : "Nothing playing");
+  const mediaTitle = ent?.attributes?.media_title;
+  const title = mediaTitle || "Nothing playing";
   const artist = ent?.attributes?.media_artist || "";
   const device = ent?.attributes?.friendly_name || "Lounge TV";
   const artPath = ent?.attributes?.entity_picture;
@@ -32,12 +33,17 @@ export default function MediaCard({ onToast }) {
   const volume = Number(ent?.attributes?.volume_level);
   const volPct = Number.isFinite(volume) ? Math.round(volume * 100) : 50;
 
+  // Empty state: off / idle / standby / unavailable AND nothing playing.
+  const inactive = !ent || ["off", "idle", "standby", "unavailable", "unknown"].includes(ent.state) || !mediaTitle;
+
   const [, force] = useState(0);
   useEffect(() => {
     if (!playing) return;
     const id = setInterval(() => force((n) => n + 1), 1000);
     return () => clearInterval(id);
   }, [playing]);
+
+  const browse = () => onToast?.("disc-3", "Open media browser on Lounge TV");
 
   const pos = livePosition(ent);
   const pct = duration > 0 ? Math.min(100, (pos / duration) * 100) : 0;
@@ -57,8 +63,25 @@ export default function MediaCard({ onToast }) {
   const setVol = (p) =>
     call("media_player", "volume_set", { volume_level: p / 100 }, { entity_id: ENTITIES.media });
 
+  if (inactive) {
+    return (
+      <div className="media rise">
+        <div className="media-empty">
+          <div className="media-empty-art">
+            <Disc3 size={36} strokeWidth={1.5} />
+          </div>
+          <div className="media-empty-t">No media active</div>
+          <div className="media-empty-s">{device}</div>
+          <button type="button" className="media-empty-browse" onClick={browse}>
+            Tap to browse
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="card rise media">
+    <div className="media rise">
       <div className="media-top">
         <div className="m-art">
           {art ? <img src={art} alt="" onError={(e) => { e.currentTarget.style.display = "none"; }} /> : <Music size={26} strokeWidth={1.6} />}

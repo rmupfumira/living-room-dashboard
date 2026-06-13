@@ -5,8 +5,9 @@ import TopClock from "./components/TopClock";
 import TopWeather from "./components/TopWeather";
 import TopAlerts from "./components/TopAlerts";
 import SecurityCard from "./components/SecurityCard";
-import KitchenCard from "./components/KitchenCard";
+import SecurityDrawer from "./components/SecurityDrawer";
 import CamerasCard from "./components/CamerasCard";
+import KitchenCard from "./components/KitchenCard";
 import SolarCard from "./components/SolarCard";
 import MediaCard from "./components/MediaCard";
 import ClimateCard from "./components/ClimateCard";
@@ -15,17 +16,19 @@ import Toast from "./components/Toast";
 import OfflineOverlay from "./components/OfflineOverlay";
 
 /**
- * Luxury Gold kitchen command center.
+ * Luxury Gold kitchen command center — v2 (hierarchy redesign).
  *
- * Single screen, no scrolling — the shell grid divides 100vh:
- *   TOP:    Clock (320) · Weather+forecast (flex) · Alerts (380)
- *   MID:    Security (320) · Kitchen Lighting hero (flex) · Cameras (380)
- *   LOWER:  Solar+flow · Media · Air Conditioner
- *   FOOTER: Scenes bar
+ *   TOP    Clock · Weather (current + 3-day) · Alerts          (highest priority)
+ *   MID    [Security compact + Cameras single] · Lighting hero (secondary)
+ *   LOWER  Solar · Media · Air Conditioner                     (tertiary)
+ *   FOOT   Scenes (elevated quick actions)
+ *
+ * Security device detail lives in a slide-out drawer.
  */
 export default function App() {
   const { status, error, retry } = useHA();
   const [view, setView] = useState("kitchen");
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
 
@@ -52,9 +55,11 @@ export default function App() {
         </div>
 
         <div className="lux-mid">
-          <SecurityCard onToast={fireToast} />
+          <div className="mid-left">
+            <SecurityCard onToast={fireToast} onDetails={() => setDrawerOpen(true)} />
+            <CamerasCard />
+          </div>
           <KitchenCard onToast={fireToast} />
-          <CamerasCard />
         </div>
 
         <div className="lux-low">
@@ -66,6 +71,7 @@ export default function App() {
         <ScenesBar onToast={fireToast} />
       </div>
 
+      <SecurityDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} onToast={fireToast} />
       <Toast toast={toast} />
       <OfflineOverlay status={status} error={error} onRetry={retry} />
     </div>

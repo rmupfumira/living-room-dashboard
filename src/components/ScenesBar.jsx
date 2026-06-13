@@ -19,7 +19,9 @@ function SceneBtn({ scene, onActivate }) {
 
   return (
     <button type="button" className={"scene-btn" + (on ? " on" : "")} onClick={() => onActivate(scene)}>
-      <Icon size={17} strokeWidth={2} />
+      <span className="scene-ic">
+        <Icon size={18} strokeWidth={2} />
+      </span>
       {scene.name}
     </button>
   );
@@ -39,7 +41,7 @@ export default function ScenesBar({ onToast }) {
   };
 
   return (
-    <div className="card rise scenes-bar">
+    <div className="scenes-bar rise">
       <span className="sect-title">Scenes</span>
       {ENTITIES.scenes.map((s) => (
         <SceneBtn key={s.id} scene={s} onActivate={activate} />

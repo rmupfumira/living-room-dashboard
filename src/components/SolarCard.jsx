@@ -25,14 +25,12 @@ function batteryVisual(socPct, charging) {
 }
 
 /**
- * Solar System — 4 stat tiles + animated Solar → Home → Battery → Grid flow.
- * Battery icon/colour shifts with SoC; flow dashes animate when power moves.
+ * Simplified solar (correction 7) — only PV / Load / Grid / Battery,
+ * large typography, no flow diagram. 2×2 of big readouts.
  */
 export default function SolarCard() {
   const pvPower = useEntity(ENTITIES.power.pvPower);
-  const pvToday = useEntity(ENTITIES.power.pvToday);
   const loadPower = useEntity(ENTITIES.power.loadPower);
-  const loadToday = useEntity(ENTITIES.power.loadToday);
   const gridPower = useEntity(ENTITIES.power.gridPower);
   const soc = useEntity(ENTITIES.power.batterySoc);
   const battPower = useEntity(ENTITIES.power.batteryPower);
@@ -50,61 +48,43 @@ export default function SolarCard() {
   const battVis = batteryVisual(socPct, charging);
 
   return (
-    <div className="card rise solar">
+    <div className="solar rise">
       <div className="solar-head">
         <Zap size={15} strokeWidth={2} color="var(--gold)" />
         <span className="sect-title">Solar System</span>
-        <span className="self">
-          {Number.isFinite(selfPct) ? `Self-Sufficiency ${selfPct.toFixed(0)}%` : ""}
-        </span>
+        {Number.isFinite(selfPct) && <span className="self">{selfPct.toFixed(0)}% self-sufficient</span>}
       </div>
 
-      <div className="solar-stats">
+      <div className="solar-grid">
         <div className="sstat">
-          <Sun className="ic" size={21} strokeWidth={2} color="var(--gold)" />
-          <span className="v tabular">{f1(pvKw)}<span className="u">kW</span></span>
-          <span className="k">PV Power</span>
-          <span className="sub">{f1(num(pvToday, 0))} kWh today</span>
-        </div>
-        <div className="sstat">
-          <House className="ic" size={21} strokeWidth={2} color="var(--ink-soft)" />
-          <span className="v tabular">{f1(loadKw)}<span className="u">kW</span></span>
-          <span className="k">Load</span>
-          <span className="sub">{f1(num(loadToday, 0))} kWh today</span>
+          <div className="sstat-top">
+            <Sun size={16} strokeWidth={2} color="var(--gold)" />
+            <span className="k">PV Power</span>
+          </div>
+          <div className="v tabular">{f1(pvKw)}<span className="u">kW</span></div>
         </div>
         <div className="sstat">
-          <UtilityPole className="ic" size={21} strokeWidth={2} color={importing ? "var(--warning)" : exporting ? "var(--success)" : "var(--ink-mute)"} />
-          <span className="v tabular">{f1(gridKw)}<span className="u">kW</span></span>
-          <span className="k">{importing ? "Importing" : exporting ? "Exporting" : "Grid"}</span>
-          <span className="sub">{importing ? "from grid" : exporting ? "to grid" : "standby"}</span>
+          <div className="sstat-top">
+            <House size={16} strokeWidth={2} color="var(--ink-soft)" />
+            <span className="k">Load</span>
+          </div>
+          <div className="v tabular">{f1(loadKw)}<span className="u">kW</span></div>
         </div>
         <div className="sstat">
-          <battVis.Icon className="ic" size={21} strokeWidth={2} color={battVis.color} />
-          <span className="v tabular">{Number.isFinite(socPct) ? Math.round(socPct) : "—"}<span className="u">%</span></span>
-          <span className="k">Battery</span>
-          <span className="sub">{charging ? `+${f1(battKw)} kW` : battKw < -0.05 ? `−${f1(battKw)} kW` : "holding"}</span>
+          <div className="sstat-top">
+            <UtilityPole size={16} strokeWidth={2} color={importing ? "var(--warning)" : exporting ? "var(--success)" : "var(--ink-mute)"} />
+            <span className="k">{importing ? "Importing" : exporting ? "Exporting" : "Grid"}</span>
+          </div>
+          <div className="v tabular">{f1(gridKw)}<span className="u">kW</span></div>
         </div>
-      </div>
-
-      <div className="sflow">
-        <div className="sflow-node">
-          <div className="ic"><Sun size={17} strokeWidth={2} color="var(--gold)" /></div>
-          <span className="k">Solar</span>
-        </div>
-        <div className={"sflow-link" + (pvKw > 0.05 ? "" : " idle")} />
-        <div className="sflow-node">
-          <div className="ic"><House size={17} strokeWidth={2} color="var(--ink-soft)" /></div>
-          <span className="k">Home</span>
-        </div>
-        <div className={"sflow-link" + (charging || battKw < -0.05 ? "" : " idle")} />
-        <div className="sflow-node">
-          <div className="ic"><battVis.Icon size={17} strokeWidth={2} color={battVis.color} /></div>
-          <span className="k">Battery</span>
-        </div>
-        <div className={"sflow-link" + (importing || exporting ? "" : " idle")} />
-        <div className="sflow-node">
-          <div className="ic"><UtilityPole size={17} strokeWidth={2} color="var(--ink-mute)" /></div>
-          <span className="k">Grid</span>
+        <div className="sstat">
+          <div className="sstat-top">
+            <battVis.Icon size={16} strokeWidth={2} color={battVis.color} />
+            <span className="k">Battery</span>
+          </div>
+          <div className="v tabular" style={{ color: battVis.color }}>
+            {Number.isFinite(socPct) ? Math.round(socPct) : "—"}<span className="u">%</span>
+          </div>
         </div>
       </div>
     </div>

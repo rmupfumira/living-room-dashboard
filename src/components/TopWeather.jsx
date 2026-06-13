@@ -38,7 +38,7 @@ export default function TopWeather() {
   const Icon = condIcon(cond);
   const temp = Number.isFinite(a.temperature) ? Math.round(a.temperature) : "—";
 
-  const days = useMemo(() => forecast.slice(0, 7), [forecast]);
+  const days = useMemo(() => forecast.slice(0, 3), [forecast]);
 
   return (
     <div className="card rise tweather">
@@ -60,7 +60,7 @@ export default function TopWeather() {
       </div>
 
       <div className="tw-forecast">
-        {(days.length ? days : Array.from({ length: 7 }, () => null)).map((d, i) => {
+        {(days.length ? days : Array.from({ length: 3 }, () => null)).map((d, i) => {
           if (!d) {
             return (
               <div key={i} className="tw-day" style={{ opacity: 0.35 }}>
