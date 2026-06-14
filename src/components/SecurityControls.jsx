@@ -3,6 +3,10 @@ import { Shield, ShieldCheck, AlertTriangle, Check } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity, useHA } from "../ha/HaContext";
 import { useService } from "../ha/useService";
+import { useConfirm } from "./Confirm";
+
+// The verb for the security-reducing direction of each control kind.
+const UNSECURE_VERB = { alarm: "Disarm", cover: "Open", lock: "Unlock" };
 
 function toPascal(name) {
   return String(name).split(/[-_]/).map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join("");
@@ -37,6 +41,7 @@ function statusOf(ctl, state) {
 function ControlTile({ ctl, onToast }) {
   const ent = useEntity(ctl.entity);
   const call = useService();
+  const confirm = useConfirm();
   const Icon = L[toPascal(ctl.icon)] || Shield;
   const { secure, unavail, label } = statusOf(ctl, ent?.state);
   const alert = !secure && !unavail && !ctl.ignore;
@@ -52,8 +57,19 @@ function ControlTile({ ctl, onToast }) {
     }
   };
 
-  const toggle = () => {
+  const toggle = async () => {
     if (unavail) return;
+    // Confirm only the security-reducing direction (open / unlock / disarm).
+    if (secure) {
+      const verb = UNSECURE_VERB[ctl.kind] || "Change";
+      const ok = await confirm({
+        title: `${verb} ${ctl.name}?`,
+        message: `This will ${verb.toLowerCase()} ${ctl.name.toLowerCase()} and reduce your home security.`,
+        confirmLabel: verb,
+        danger: true,
+      });
+      if (!ok) return;
+    }
     onToast?.("shield", `${ctl.name} ${secure ? "opening/disarming" : "securing"}`);
     action();
   };

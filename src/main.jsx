@@ -2,6 +2,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import { HaProvider } from "./ha/HaContext.jsx";
+import { ConfirmProvider } from "./components/Confirm.jsx";
 import "./luxury.css";
 
 /**
@@ -40,7 +41,9 @@ window.addEventListener("resize", applyScale);
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <HaProvider>
-      <App />
+      <ConfirmProvider>
+        <App />
+      </ConfirmProvider>
     </HaProvider>
   </StrictMode>
 );

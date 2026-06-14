@@ -2,6 +2,7 @@ import { Waves, Thermometer, FlaskConical, Droplets, Power, Lightbulb, Lock, Unl
 import { ENTITIES } from "../entities";
 import { useEntity } from "../ha/HaContext";
 import { useService } from "../ha/useService";
+import { useConfirm } from "./Confirm";
 import Switch from "./Switch";
 
 const isOn = (ent) => ent?.state === "on";
@@ -39,6 +40,7 @@ function LightTile({ light }) {
 export default function PoolView({ onToast }) {
   const PL = ENTITIES.pool;
   const call = useService();
+  const confirm = useConfirm();
   const pump = useEntity(PL.pump);
   const lock = useEntity(PL.entLock);
   const today = useEntity(PL.runtimeToday);
@@ -59,7 +61,16 @@ export default function PoolView({ onToast }) {
     onToast?.("power", `Pool pump ${pumpOn ? "off" : "on"}`);
     call("switch", "toggle", {}, { entity_id: PL.pump });
   };
-  const toggleLock = () => {
+  const toggleLock = async () => {
+    if (locked) {
+      const ok = await confirm({
+        title: "Unlock Entertainment Area?",
+        message: "This will unlock the entertainment-area door and reduce your home security.",
+        confirmLabel: "Unlock",
+        danger: true,
+      });
+      if (!ok) return;
+    }
     onToast?.("lock", `Ent. area ${locked ? "unlocking" : "locking"}`);
     call("lock", locked ? "unlock" : "lock", {}, { entity_id: PL.entLock });
   };

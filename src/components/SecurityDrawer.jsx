@@ -2,6 +2,7 @@ import { Shield, Siren, Warehouse, Fence, DoorClosed, DoorOpen, X } from "lucide
 import { ENTITIES } from "../entities";
 import { useEntity } from "../ha/HaContext";
 import { useService } from "../ha/useService";
+import { useConfirm } from "./Confirm";
 
 /** A single tappable device row inside the drawer. */
 function Row({ Icon, name, status, alerting, unavail, onClick }) {
@@ -38,6 +39,7 @@ export default function SecurityDrawer({ open, onClose, onToast }) {
   const entArea = useEntity(ENTITIES.security.entArea);
   const screen = useEntity(ENTITIES.security.screenGate);
   const call = useService();
+  const confirm = useConfirm();
 
   if (!open) return null;
 
@@ -46,19 +48,34 @@ export default function SecurityDrawer({ open, onClose, onToast }) {
   const isLocked = (e) => e && e.state === "locked";
   const unavail = (e) => !e || e.state === "unavailable";
 
-  const toggleCover = (slot, ent, a, b) => {
+  // Confirm the security-reducing direction (open / disarm / unlock); the
+  // securing direction (close / arm / lock) stays one-tap.
+  const guard = async (critical, verb, name) => {
+    if (!critical) return true;
+    return confirm({
+      title: `${verb} ${name}?`,
+      message: `This will ${verb.toLowerCase()} ${name.toLowerCase()} and reduce your home security.`,
+      confirmLabel: verb,
+      danger: true,
+    });
+  };
+
+  const toggleCover = async (slot, ent, name) => {
     const o = isOpen(ent);
-    onToast?.("shield", o ? b : a);
+    if (!(await guard(!o, "Open", name))) return;
+    onToast?.("shield", o ? `${name} closing` : `${name} opening`);
     call("cover", o ? "close_cover" : "open_cover", {}, { entity_id: ENTITIES.security[slot] });
   };
-  const toggleAlarm = (slot, ent, a, b) => {
+  const toggleAlarm = async (slot, ent, name) => {
     const ar = isArmed(ent);
-    onToast?.("shield", ar ? b : a);
+    if (!(await guard(ar, "Disarm", name))) return;
+    onToast?.("shield", ar ? `${name} disarmed` : `${name} armed`);
     call("alarm_control_panel", ar ? "alarm_disarm" : "alarm_arm_away", {}, { entity_id: ENTITIES.security[slot] });
   };
-  const toggleLock = (slot, ent, a, b) => {
+  const toggleLock = async (slot, ent, name) => {
     const l = isLocked(ent);
-    onToast?.("lock", l ? b : a);
+    if (!(await guard(l, "Unlock", name))) return;
+    onToast?.("lock", l ? `${name} unlocked` : `${name} locked`);
     call("lock", l ? "unlock" : "lock", {}, { entity_id: ENTITIES.security[slot] });
   };
 
@@ -74,12 +91,12 @@ export default function SecurityDrawer({ open, onClose, onToast }) {
           </button>
         </div>
         <div className="drawer-list">
-          <Row Icon={Warehouse} name="Garage Door" status={isOpen(garage) ? "Open" : "Closed"} alerting={isOpen(garage)} unavail={unavail(garage)} onClick={() => toggleCover("garage", garage, "Garage opening", "Garage closing")} />
-          <Row Icon={Fence} name="Front Gate" status={isOpen(gate) ? "Open" : "Closed"} alerting={isOpen(gate)} unavail={unavail(gate)} onClick={() => toggleCover("gate", gate, "Gate opening", "Gate closing")} />
-          <Row Icon={Siren} name="Outdoor Alarm" status={isArmed(outdoor) ? "Armed" : "Disarmed"} alerting={!isArmed(outdoor) && !unavail(outdoor)} unavail={unavail(outdoor)} onClick={() => toggleAlarm("outdoorAlarm", outdoor, "Outdoor alarm armed", "Outdoor alarm disarmed")} />
-          <Row Icon={Shield} name="Indoor Alarm" status={isArmed(indoor) ? "Armed" : "Disarmed"} alerting={false} unavail={unavail(indoor)} onClick={() => toggleAlarm("indoorAlarm", indoor, "Indoor alarm armed", "Indoor alarm disarmed")} />
-          <Row Icon={isLocked(entArea) ? DoorClosed : DoorOpen} name="Entertainment Door" status={isLocked(entArea) ? "Locked" : "Unlocked"} alerting={!isLocked(entArea) && !unavail(entArea)} unavail={unavail(entArea)} onClick={() => toggleLock("entArea", entArea, "Ent door locked", "Ent door unlocked")} />
-          <Row Icon={isOpen(screen) ? DoorOpen : DoorClosed} name="Screen Gate" status={isOpen(screen) ? "Open" : "Closed"} alerting={isOpen(screen)} unavail={unavail(screen)} onClick={() => toggleCover("screenGate", screen, "Screen gate opening", "Screen gate closing")} />
+          <Row Icon={Warehouse} name="Garage Door" status={isOpen(garage) ? "Open" : "Closed"} alerting={isOpen(garage)} unavail={unavail(garage)} onClick={() => toggleCover("garage", garage, "Garage Door")} />
+          <Row Icon={Fence} name="Front Gate" status={isOpen(gate) ? "Open" : "Closed"} alerting={isOpen(gate)} unavail={unavail(gate)} onClick={() => toggleCover("gate", gate, "Front Gate")} />
+          <Row Icon={Siren} name="Outdoor Alarm" status={isArmed(outdoor) ? "Armed" : "Disarmed"} alerting={!isArmed(outdoor) && !unavail(outdoor)} unavail={unavail(outdoor)} onClick={() => toggleAlarm("outdoorAlarm", outdoor, "Outdoor Alarm")} />
+          <Row Icon={Shield} name="Indoor Alarm" status={isArmed(indoor) ? "Armed" : "Disarmed"} alerting={false} unavail={unavail(indoor)} onClick={() => toggleAlarm("indoorAlarm", indoor, "Indoor Alarm")} />
+          <Row Icon={isLocked(entArea) ? DoorClosed : DoorOpen} name="Entertainment Door" status={isLocked(entArea) ? "Locked" : "Unlocked"} alerting={!isLocked(entArea) && !unavail(entArea)} unavail={unavail(entArea)} onClick={() => toggleLock("entArea", entArea, "Entertainment Door")} />
+          <Row Icon={isOpen(screen) ? DoorOpen : DoorClosed} name="Screen Gate" status={isOpen(screen) ? "Open" : "Closed"} alerting={isOpen(screen)} unavail={unavail(screen)} onClick={() => toggleCover("screenGate", screen, "Screen Gate")} />
         </div>
       </aside>
     </>
