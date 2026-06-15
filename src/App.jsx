@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useHA } from "./ha/HaContext";
+import { useWakeRefresh } from "./ha/useWakeRefresh";
 import { ENTITIES } from "./entities";
 import Rail from "./components/Rail";
 import StatusBar from "./components/StatusBar";
@@ -101,6 +102,9 @@ export default function App() {
   const isRoom = ROOM_VIEWS.includes(view);
   const SystemView = SYSTEM_VIEWS[view];
   const climate = ENTITIES.climate[view]; // present for living/tinotenda → AC; absent for kitchen → geyser
+
+  // Self-heal a long-running panel: reload on staleness + on room motion.
+  useWakeRefresh(view in ENTITIES.wake ? ENTITIES.wake[view] : ENTITIES.wake._default);
 
   return (
     <div className="lux-app">

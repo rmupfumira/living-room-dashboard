@@ -269,6 +269,17 @@ export const ENTITIES = {
     { id: "pool", name: "Swimming Pool", entity: "camera.swimming_pool_frigate" },
   ],
 
+  /* ─── Wake-on-motion refresh ─────────────────────────────────
+     Each panel watches its room's occupancy sensor; when someone walks up
+     (off→on) the dashboard refreshes so it's never showing stale data.
+     `_default` is used on the system views (which aren't tied to one room). */
+  wake: {
+    _default: "binary_sensor.apollo_bookshelf_zone2_occupancy", // lounge radar
+    kitchen: "binary_sensor.kitchen_occupancy_group",
+    living: "binary_sensor.apollo_bookshelf_zone2_occupancy",
+    tinotenda: null,
+  },
+
   /* ─── Media · Lamp ───────────────────────────────────────── */
   media: "media_player.living_room_2",   // "Lounge TV" — LG WebOS
   lamp: "switch.kitchen_pendant",        // "Kitchen Pendant" (switch.* — toggle only)
