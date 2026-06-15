@@ -100,7 +100,7 @@ export default function StatusBar({ onOpenWeather, onOpenSecurity, onToast }) {
 
       {/* weather */}
       <div className="sb-seg sb-weather" onClick={onOpenWeather} role="button" tabIndex={0}>
-        <div className="sb-w-ic"><WIcon size={40} strokeWidth={1.6} /></div>
+        <div className="sb-w-ic"><WIcon size={48} strokeWidth={1.6} /></div>
         <div>
           <div className="sb-w-temp tabular">{temp}°</div>
           <div className="sb-w-cond">{condLabel(cond)}</div>
@@ -111,7 +111,7 @@ export default function StatusBar({ onOpenWeather, onOpenSecurity, onToast }) {
       {/* home status */}
       <div className={"sb-seg sb-home " + (secure ? "secure" : "attn")} onClick={onOpenSecurity} role="button" tabIndex={0}>
         <div className="sb-home-ic">
-          {secure ? <ShieldCheck size={24} strokeWidth={2} /> : <ShieldAlert size={24} strokeWidth={2} />}
+          {secure ? <ShieldCheck size={28} strokeWidth={2} /> : <ShieldAlert size={28} strokeWidth={2} />}
         </div>
         <div>
           <div className="sb-home-t">{secure ? "Home Secure" : "Attention"}</div>
@@ -124,9 +124,9 @@ export default function StatusBar({ onOpenWeather, onOpenSecurity, onToast }) {
       <div className={"sb-alerts " + alertClass}>
         <div className="sb-alert-ic">
           {all.length === 0 ? (
-            <ShieldCheck size={24} strokeWidth={2} color="var(--success)" />
+            <ShieldCheck size={28} strokeWidth={2} color="var(--success)" />
           ) : (
-            <AlertTriangle size={24} strokeWidth={2} />
+            <AlertTriangle size={28} strokeWidth={2} />
           )}
         </div>
         {all.length === 0 ? (

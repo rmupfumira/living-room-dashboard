@@ -185,6 +185,19 @@ export const ENTITIES = {
     security: "WPA", // WPA/WPA2 — used to build the scan-to-join QR
   },
 
+  /* ─── Tinotenda's room (dedicated view: big live camera + controls) ── */
+  tinotenda: {
+    camera: "camera.tino_rtsp",
+    ac: "climate.tino_ac",
+    acPower: "switch.shellyplus1pm_fortune_ac",     // AC plug
+    light: "switch.sonoff_10021a6997_1",
+    temp: "sensor.tino_temp_sensor_temperature",
+    humidity: "sensor.tino_temp_sensor_humidity",
+    autoTemp: "input_boolean.tino_auto_temp_control",
+    minTemp: "input_number.tino_min_temp",
+    maxTemp: "input_number.tino_max_temp",
+  },
+
   /* ─── Robot vacuum (Dreame L20 Ultra) ────────────────────── */
   vacuum: {
     entity: "vacuum.vac_man",

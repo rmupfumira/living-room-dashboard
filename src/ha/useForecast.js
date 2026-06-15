@@ -57,7 +57,7 @@ export function useForecast(entityId, preferredType = "daily", refreshMs = 15 * 
           (event) => {
             if (!alive) return;
             const arr = event?.forecast || [];
-            if (arr.length) setForecast(arr);
+            if (arr.length) { got = true; setForecast(arr); }
           },
           {
             type: "weather/subscribe_forecast",
@@ -70,29 +70,27 @@ export function useForecast(entityId, preferredType = "daily", refreshMs = 15 * 
       }
     };
 
+    let got = false;
+    const apply = (arr) => {
+      if (alive && Array.isArray(arr) && arr.length) { got = true; setForecast(arr); }
+    };
+    const fallback = preferredType === "daily" ? "hourly" : "daily";
+
     const load = async () => {
-      // 1) service call, preferred type
-      let arr = await tryServiceCall(preferredType);
-      if (alive && arr.length) {
-        setForecast(arr);
-        return;
-      }
-      // 2) service call, fallback type
-      const fallback = preferredType === "daily" ? "hourly" : "daily";
-      arr = await tryServiceCall(fallback);
-      if (alive && arr.length) {
-        setForecast(arr);
-        return;
-      }
-      // 3) live subscription, preferred then fallback
-      await trySubscribe(preferredType);
-      if (alive && forecast.length === 0) {
-        await trySubscribe(fallback);
+      // Fire the live subscription AND the one-shot service call together —
+      // whichever yields rows first wins. (Some integrations only push via
+      // subscribe; others only answer get_forecasts.)
+      trySubscribe(preferredType);
+      apply(await tryServiceCall(preferredType));
+      // Nothing yet? try the other granularity.
+      if (alive && !got) {
+        trySubscribe(fallback);
+        apply(await tryServiceCall(fallback));
       }
     };
 
     load();
-    const id = setInterval(load, refreshMs);
+    const id = setInterval(() => tryServiceCall(preferredType).then(apply), refreshMs);
     return () => {
       alive = false;
       clearInterval(id);

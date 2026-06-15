@@ -26,6 +26,7 @@ import GeyserView from "./components/GeyserView";
 import IrrigationView from "./components/IrrigationView";
 import PoolView from "./components/PoolView";
 import CamerasView from "./components/CamerasView";
+import TinotendaView from "./components/TinotendaView";
 import Toast from "./components/Toast";
 import OfflineOverlay from "./components/OfflineOverlay";
 
@@ -50,7 +51,7 @@ const VIEW_PATH = {
   cameras: "/cameras",
 };
 const ROUTES = Object.fromEntries(Object.entries(VIEW_PATH).map(([v, p]) => [p, v]));
-const ROOM_VIEWS = ["kitchen", "living", "tinotenda"];
+const ROOM_VIEWS = ["kitchen", "living"];
 const IDLE_MS = 120_000; // show the clock screensaver after 2 min untouched
 
 function viewFromPath() {
@@ -59,6 +60,7 @@ function viewFromPath() {
 }
 
 const SYSTEM_VIEWS = {
+  tinotenda: TinotendaView,
   vacuum: VacuumView,
   power: PowerView,
   geyser: GeyserView,
