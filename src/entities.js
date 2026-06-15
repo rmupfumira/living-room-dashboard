@@ -45,6 +45,26 @@ export const ENTITIES = {
     batteryPower: "sensor.battery_power",              // W (+charge / −discharge)
     batteryTime: null,                                 // not present in this install
     selfSufficiency: "sensor.off_grid_percentage_today", // %
+    // Individual device power draw (W) — shown on the Power view, sorted live
+    // by current consumption. Offline plugs render as "—" and sort to the end.
+    devices: [
+      { name: "Pool Pump", entity: "sensor.pool_pump" },
+      { name: "Geyser", entity: "sensor.geyser_power" },
+      { name: "Dryer", entity: "sensor.dryer_power" },
+      { name: "Washing Machine", entity: "sensor.washing_machine_power" },
+      { name: "Living Room AC", entity: "sensor.livingroom_ac_power" },
+      { name: "Master Bed AC", entity: "sensor.master_bed_ac_switch_0_power" },
+      { name: "Office AC", entity: "sensor.office_ac_power_2" },
+      { name: "Craig AC", entity: "sensor.craigacpower" },
+      { name: "Mini PC", entity: "sensor.mini_pc_switch_0_power" },
+      { name: "Hallway Light", entity: "sensor.hallway_smartplug_light_power" },
+      { name: "Scullery Lights", entity: "sensor.scullery_undercabinet_light_plug_power" },
+      { name: "Irrigation Pump", entity: "sensor.irrigation_pump_power" },
+      { name: "Laundry Iron", entity: "sensor.laundry_iron_power" },
+      { name: "Faith's Lamp", entity: "sensor.faith_lamp_power" },
+      { name: "Russel's Lamp", entity: "sensor.russel_lamp_power" },
+      { name: "Knoek Lamp", entity: "sensor.knoek_lamp_smart_plug_power" },
+    ],
   },
 
   /* ─── Scenes (one-tap moods) ────────────────────────────────

@@ -19,6 +19,7 @@ import LightingView from "./components/LightingView";
 import WeatherModal from "./components/WeatherModal";
 import GuestWifi from "./components/GuestWifi";
 import Screensaver from "./components/Screensaver";
+import DoorbellOverlay from "./components/DoorbellOverlay";
 import VacuumView from "./components/VacuumView";
 import PowerView from "./components/PowerView";
 import GeyserView from "./components/GeyserView";
@@ -109,10 +110,12 @@ export default function App() {
   // Self-heal a long-running panel: reload on staleness + on room motion.
   useWakeRefresh(view in ENTITIES.wake ? ENTITIES.wake[view] : ENTITIES.wake._default);
 
-  // Idle clock screensaver — suppressed while a critical alert is active so an
-  // emergency is never hidden behind the clock.
+  // Idle clock screensaver — suppressed while a critical alert is active (so an
+  // emergency is never hidden) or the doorbell is ringing (so the visitor
+  // takeover shows the dashboard, not the clock, afterwards).
   const criticalAlert = ALERT_SENSORS.some((s) => s.class === "critical" && entities[s.id]?.state === "on");
-  const [idle, wake] = useIdle(IDLE_MS, { inhibit: criticalAlert });
+  const doorbellRinging = entities[ENTITIES.doorbell.ringing]?.state === "on";
+  const [idle, wake] = useIdle(IDLE_MS, { inhibit: criticalAlert || doorbellRinging });
 
   return (
     <div className="lux-app">
@@ -172,6 +175,7 @@ export default function App() {
       <Toast toast={toast} />
       <OfflineOverlay status={status} error={error} onRetry={retry} />
       {idle && <Screensaver onWake={wake} />}
+      <DoorbellOverlay onToast={fireToast} />
     </div>
   );
 }

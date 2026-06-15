@@ -1,7 +1,7 @@
 import { Sun, House, UtilityPole, Zap, Leaf, Plug, AlertTriangle,
   Battery, BatteryLow, BatteryMedium, BatteryFull, BatteryCharging, BatteryWarning } from "lucide-react";
 import { ENTITIES } from "../entities";
-import { useEntity } from "../ha/HaContext";
+import { useEntity, useHA } from "../ha/HaContext";
 
 function num(ent, fb = NaN) { const v = Number(ent?.state); return Number.isFinite(v) ? v : fb; }
 function toKw(ent) {
@@ -20,14 +20,15 @@ function batteryVisual(soc, charging) {
   return { Icon: BatteryWarning, color: "var(--critical)" };
 }
 
-/** Full-page Power / Energy view. */
+/** Full-page Power / Energy view — aggregate + per-device usage. */
 export default function PowerView() {
   const P = ENTITIES.power;
+  const { entities } = useHA();
   const pv = useEntity(P.pvPower);
   const load = useEntity(P.loadPower);
-  const grid = useEntity(P.gridPower);
   const soc = useEntity(P.batterySoc);
   const battP = useEntity(P.batteryPower);
+  const grid = useEntity(P.gridPower);
   const pvToday = useEntity(P.pvToday);
   const loadToday = useEntity(P.loadToday);
   const self = useEntity(P.selfSufficiency);
@@ -62,7 +63,12 @@ export default function PowerView() {
     { Icon: UtilityPole, k: "Exported today", v: Number.isFinite(num(expToday)) ? f1(num(expToday)) : "—", u: "kWh", color: "var(--success)" },
   ];
 
-  const stage = ssStage?.state;
+  // Per-device usage (W), sorted live by current draw; offline → end.
+  const devices = P.devices
+    .map((d) => ({ name: d.name, w: num(entities[d.entity]) }))
+    .sort((a, b) => (Number.isFinite(b.w) ? b.w : -1) - (Number.isFinite(a.w) ? a.w : -1));
+  const maxW = Math.max(1, ...devices.map((d) => (Number.isFinite(d.w) ? d.w : 0)));
+
   const stageNum = num(ssStage);
   const loadShedActive = Number.isFinite(stageNum) && stageNum > 0;
   const nextSlot = ssCal?.state === "on" ? (ssCal.attributes?.message || "On now") : ssCal?.attributes?.start_time;
@@ -92,16 +98,37 @@ export default function PowerView() {
         ))}
       </div>
 
-      <div className="pw-stats">
-        {stats.map((s, i) => (
-          <div key={i} className="pw-stat">
-            <div className="pw-stat-ic" style={{ color: s.color }}><s.Icon size={18} strokeWidth={2} /></div>
-            <div className="pw-stat-meta">
-              <div className="pw-stat-v tabular">{s.v}<span className="u">{s.u}</span></div>
-              <div className="pw-stat-k">{s.k}</div>
+      <div className="pw-lower">
+        <div className="pw-stats">
+          {stats.map((s, i) => (
+            <div key={i} className="pw-stat">
+              <div className="pw-stat-ic" style={{ color: s.color }}><s.Icon size={18} strokeWidth={2} /></div>
+              <div className="pw-stat-meta">
+                <div className="pw-stat-v tabular">{s.v}<span className="u">{s.u}</span></div>
+                <div className="pw-stat-k">{s.k}</div>
+              </div>
             </div>
+          ))}
+        </div>
+
+        <div className="pw-devices">
+          <div className="pw-dev-h">Device usage</div>
+          <div className="pw-dev-list">
+            {devices.map((d) => {
+              const on = Number.isFinite(d.w) && d.w > 0.5;
+              const pct = Number.isFinite(d.w) ? Math.max(0, Math.min(100, (d.w / maxW) * 100)) : 0;
+              return (
+                <div key={d.name} className={"pw-dev" + (on ? "" : " idle")}>
+                  <span className="pw-dev-n">{d.name}</span>
+                  <div className="pw-dev-track"><div className="pw-dev-fill" style={{ width: pct + "%" }} /></div>
+                  <span className="pw-dev-v tabular">
+                    {Number.isFinite(d.w) ? Math.round(d.w) : "—"}<span className="u">W</span>
+                  </span>
+                </div>
+              );
+            })}
           </div>
-        ))}
+        </div>
       </div>
     </div>
   );
