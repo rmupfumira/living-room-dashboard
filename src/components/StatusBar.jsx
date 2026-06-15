@@ -48,11 +48,9 @@ export default function StatusBar({ onOpenWeather, onOpenSecurity, onToast }) {
     return () => clearInterval(id);
   }, []);
 
-  /* clock */
-  const hh = now.getHours();
-  const h12 = ((hh + 11) % 12) + 1;
+  /* clock (24-hour) */
+  const hh = String(now.getHours()).padStart(2, "0");
   const mm = String(now.getMinutes()).padStart(2, "0");
-  const ampm = hh < 12 ? "AM" : "PM";
   const dateStr = now.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "long" });
 
   /* weather */
@@ -93,8 +91,7 @@ export default function StatusBar({ onOpenWeather, onOpenSecurity, onToast }) {
       <div className="sb-seg">
         <div>
           <div className="sb-time">
-            <span className="sb-hm">{h12}:{mm}</span>
-            <span className="sb-ampm">{ampm}</span>
+            <span className="sb-hm">{hh}:{mm}</span>
           </div>
           <div className="sb-date">{dateStr}</div>
         </div>

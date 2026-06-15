@@ -33,10 +33,8 @@ export default function Screensaver({ onWake }) {
     return () => window.removeEventListener("keydown", wake, true);
   }, [onWake]);
 
-  const hh = now.getHours();
-  const h12 = ((hh + 11) % 12) + 1;
+  const hh = String(now.getHours()).padStart(2, "0");
   const mm = String(now.getMinutes()).padStart(2, "0");
-  const ampm = hh < 12 ? "AM" : "PM";
   const dateStr = now.toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long" });
 
   const cond = weather?.state;
@@ -46,8 +44,7 @@ export default function Screensaver({ onWake }) {
   return (
     <div className="saver" onClick={onWake} role="button" tabIndex={0} aria-label="Wake dashboard">
       <div className="saver-clock tabular">
-        <span>{h12}</span><span className="saver-colon">:</span><span>{mm}</span>
-        <span className="saver-ampm">{ampm}</span>
+        <span>{hh}</span><span className="saver-colon">:</span><span>{mm}</span>
       </div>
       <div className="saver-date">{dateStr}</div>
       {weather && (
