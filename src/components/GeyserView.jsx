@@ -13,6 +13,7 @@ export default function GeyserView({ onToast }) {
   const curEnt = useEntity(G.currentTemp);
   const tgtEnt = useEntity(G.targetTemp);
   const powEnt = useEntity(G.power);
+  const ctrlEnt = useEntity(G.controller);
   const call = useService();
 
   const on = toggleEnt?.state === "on";
@@ -25,9 +26,16 @@ export default function GeyserView({ onToast }) {
   const tgtStep = Number(tgtEnt?.attributes?.step) || 1;
   const heating = on && Number.isFinite(power) && power > 50;
 
-  const toggle = () => {
-    onToast?.(on ? "power-off" : "power", `Geyser ${on ? "off" : "on"}`);
-    call(G.toggle.split(".")[0], "toggle", {}, { entity_id: G.toggle });
+  const ctrlOn = ctrlEnt?.state === "on";
+  const ctrlUnavail = !ctrlEnt || ctrlEnt.state === "unavailable";
+
+  const toggleDb = () => {
+    onToast?.(on ? "power-off" : "power", `Geyser DB switch ${on ? "off" : "on"}`);
+    call("switch", "toggle", {}, { entity_id: G.toggle });
+  };
+  const toggleCtrl = () => {
+    onToast?.(ctrlOn ? "power-off" : "power", `Controller ${ctrlOn ? "off" : "on"}`);
+    call("switch", "toggle", {}, { entity_id: G.controller });
   };
   const adjust = (delta) => {
     if (!Number.isFinite(target)) return;
@@ -44,12 +52,9 @@ export default function GeyserView({ onToast }) {
       <div className="sv-head">
         <Flame size={18} strokeWidth={2} color="var(--gold)" />
         <span className="sect-title">Geyser</span>
-        <span className={"sv-pill " + (heating ? "warn" : on ? "ok" : "")}>
+        <span className={"sv-pill " + (heating ? "warn" : on ? "ok" : "")} style={{ marginLeft: "auto" }}>
           {unavail ? "Unavailable" : heating ? "Heating" : on ? "On · idle" : "Off"}
         </span>
-        <div style={{ marginLeft: "auto" }}>
-          <Switch on={on} onClick={toggle} disabled={unavail} ariaLabel="Geyser power" />
-        </div>
       </div>
 
       <div className="gv-body">
@@ -83,6 +88,23 @@ export default function GeyserView({ onToast }) {
                 {Number.isFinite(power) ? Math.round(power) : "—"}<span className="u">W</span>
               </div>
               <div className="gv-power-l">{heating ? "Drawing power — heating" : "Element idle"}</div>
+            </div>
+          </div>
+
+          <div className="gv-switches">
+            <div className="gv-sw">
+              <div className="gv-sw-meta">
+                <div className="gv-sw-n">DB Switch</div>
+                <div className="gv-sw-s">Mains isolator</div>
+              </div>
+              <Switch on={on} onClick={toggleDb} disabled={unavail} ariaLabel="Geyser DB switch" />
+            </div>
+            <div className="gv-sw">
+              <div className="gv-sw-meta">
+                <div className="gv-sw-n">Controller</div>
+                <div className="gv-sw-s">GeyserWise power</div>
+              </div>
+              <Switch on={ctrlOn} onClick={toggleCtrl} disabled={ctrlUnavail} ariaLabel="GeyserWise controller" />
             </div>
           </div>
         </div>

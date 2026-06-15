@@ -149,8 +149,8 @@ export const ENTITIES = {
 
   /* ─── Geyser (kitchen climate slot + full Geyser view) ───── */
   geyser: {
-    toggle: "switch.geyser",                              // on/off
-    altToggle: "switch.geyserwise_tse_power",             // controller power
+    toggle: "switch.geyser",                              // DB / mains isolator switch
+    controller: "switch.geyserwise_tse_power",            // GeyserWise controller power
     currentTemp: "sensor.geyserwise_tse_water_temperature", // °C actual
     targetTemp: "input_number.geyser_temperature",        // °C setpoint
     power: "sensor.geyser_power",                         // W draw (heating)

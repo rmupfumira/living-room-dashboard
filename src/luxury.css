@@ -1326,6 +1326,14 @@ body {
 .gv-power { display: flex; align-items: center; gap: 16px; padding: 18px 22px; border-radius: var(--r-lg); background: var(--surf-1); box-shadow: var(--el-1); }
 .gv-power-ic { width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center; background: var(--recess-2); flex-shrink: 0; }
 .gv-power-v { font-size: 30px; font-weight: 600; letter-spacing: -0.02em; }
+.gv-switches { display: flex; gap: 14px; }
+.gv-sw {
+  flex: 1; display: flex; align-items: center; gap: 12px;
+  padding: 16px 20px; border-radius: var(--r-lg); background: var(--surf-1); box-shadow: var(--el-1);
+}
+.gv-sw-meta { flex: 1; min-width: 0; }
+.gv-sw-n { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.gv-sw-s { font-size: 13px; font-weight: 500; color: var(--ink-mute); margin-top: 2px; }
 .gv-power-l { font-size: 13px; font-weight: 500; color: var(--ink-mute); margin-top: 2px; }
 
 /* ── Irrigation view ── */
