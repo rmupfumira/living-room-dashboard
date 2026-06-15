@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useHA } from "./ha/HaContext";
 import { useWakeRefresh } from "./ha/useWakeRefresh";
-import { ENTITIES } from "./entities";
+import { useIdle } from "./useIdle";
+import { ENTITIES, ALERT_SENSORS } from "./entities";
 import Rail from "./components/Rail";
 import StatusBar from "./components/StatusBar";
 import SecurityDrawer from "./components/SecurityDrawer";
@@ -17,6 +18,7 @@ import ScenesBar from "./components/ScenesBar";
 import LightingView from "./components/LightingView";
 import WeatherModal from "./components/WeatherModal";
 import GuestWifi from "./components/GuestWifi";
+import Screensaver from "./components/Screensaver";
 import VacuumView from "./components/VacuumView";
 import PowerView from "./components/PowerView";
 import GeyserView from "./components/GeyserView";
@@ -48,6 +50,7 @@ const VIEW_PATH = {
 };
 const ROUTES = Object.fromEntries(Object.entries(VIEW_PATH).map(([v, p]) => [p, v]));
 const ROOM_VIEWS = ["kitchen", "living", "tinotenda"];
+const IDLE_MS = 120_000; // show the clock screensaver after 2 min untouched
 
 function viewFromPath() {
   const p = window.location.pathname.replace(/\/+$/, "") || "/";
@@ -64,7 +67,7 @@ const SYSTEM_VIEWS = {
 };
 
 export default function App() {
-  const { status, error, retry } = useHA();
+  const { status, error, retry, entities } = useHA();
   const [view, setView] = useState(viewFromPath); // see VIEW_PATH
   const [subview, setSubview] = useState(null); // null | "lighting" (room views only)
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -105,6 +108,11 @@ export default function App() {
 
   // Self-heal a long-running panel: reload on staleness + on room motion.
   useWakeRefresh(view in ENTITIES.wake ? ENTITIES.wake[view] : ENTITIES.wake._default);
+
+  // Idle clock screensaver — suppressed while a critical alert is active so an
+  // emergency is never hidden behind the clock.
+  const criticalAlert = ALERT_SENSORS.some((s) => s.class === "critical" && entities[s.id]?.state === "on");
+  const [idle, wake] = useIdle(IDLE_MS, { inhibit: criticalAlert });
 
   return (
     <div className="lux-app">
@@ -163,6 +171,7 @@ export default function App() {
       <WeatherModal open={weatherOpen} onClose={() => setWeatherOpen(false)} />
       <Toast toast={toast} />
       <OfflineOverlay status={status} error={error} onRetry={retry} />
+      {idle && <Screensaver onWake={wake} />}
     </div>
   );
 }
