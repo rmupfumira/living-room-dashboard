@@ -49,7 +49,7 @@ export default function Screensaver({ onWake }) {
       <div className="saver-date">{dateStr}</div>
       {weather && (
         <div className="saver-wx">
-          <WIcon size={40} strokeWidth={1.6} />
+          <WIcon size={56} strokeWidth={1.5} />
           {temp != null && <span className="saver-wx-t">{temp}°</span>}
           {cond && <span className="saver-wx-c">{condLabel(cond)}</span>}
         </div>
