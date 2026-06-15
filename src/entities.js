@@ -17,6 +17,7 @@ export const ENTITIES = {
     motion: "binary_sensor.g4_doorbell_pro_poe_motion",
     ringing: "input_boolean.doorbell_ringing",    // sticky "is ringing right now"
     lock: "lock.front_door_lock",
+    allowScene: "input_boolean.allow_visitor_in", // "Allow in" → fires the arrive-home scene
   },
 
   /* ─── Security ──────────────────────────────────────────── */

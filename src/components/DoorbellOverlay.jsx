@@ -40,8 +40,8 @@ export default function DoorbellOverlay({ onToast }) {
     clearRing();
   };
   const allow = () => {
-    onToast?.("door-open", "Front door unlocked — come in");
-    call("lock", "unlock", {}, { entity_id: ENTITIES.doorbell.lock });
+    onToast?.("door-open", "Welcome home — letting them in");
+    call("input_boolean", "turn_on", {}, { entity_id: ENTITIES.doorbell.allowScene });
     clearRing();
   };
 
