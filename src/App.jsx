@@ -20,6 +20,7 @@ import WeatherModal from "./components/WeatherModal";
 import GuestWifi from "./components/GuestWifi";
 import Screensaver from "./components/Screensaver";
 import DoorbellOverlay from "./components/DoorbellOverlay";
+import GuestModeAlert from "./components/GuestModeAlert";
 import VacuumView from "./components/VacuumView";
 import PowerView from "./components/PowerView";
 import GeyserView from "./components/GeyserView";
@@ -178,6 +179,7 @@ export default function App() {
       <OfflineOverlay status={status} error={error} onRetry={retry} />
       {idle && <Screensaver onWake={wake} />}
       <DoorbellOverlay onToast={fireToast} />
+      <GuestModeAlert onToast={fireToast} />
     </div>
   );
 }

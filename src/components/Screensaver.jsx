@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Sun, Moon, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, CloudSun, Wind, Snowflake } from "lucide-react";
+import { Sun, Moon, Cloud, CloudRain, CloudSnow, CloudLightning, CloudFog, CloudSun, Wind, Snowflake, ShieldOff } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity } from "../ha/HaContext";
 
@@ -19,6 +19,7 @@ const condLabel = (s) => (s || "").replace(/-/g, " ").replace(/\b\w/g, (c) => c.
 export default function Screensaver({ onWake }) {
   const [now, setNow] = useState(() => new Date());
   const weather = useEntity(ENTITIES.weather);
+  const guest = useEntity(ENTITIES.guestMode);
 
   useEffect(() => {
     const id = setInterval(() => setNow(new Date()), 1000);
@@ -43,6 +44,9 @@ export default function Screensaver({ onWake }) {
 
   return (
     <div className="saver" onClick={onWake} role="button" tabIndex={0} aria-label="Wake dashboard">
+      {guest?.state === "on" && (
+        <div className="saver-guest"><ShieldOff size={20} strokeWidth={2.2} /> Guest Mode · Security paused</div>
+      )}
       <div className="saver-clock tabular">
         <span>{hh}</span><span className="saver-colon">:</span><span>{mm}</span>
       </div>

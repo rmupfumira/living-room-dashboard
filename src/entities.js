@@ -80,6 +80,9 @@ export const ENTITIES = {
     { id: "silent",  name: "Silent",       icon: "volume-x",     entity: "input_boolean.dont_disturb" },
   ],
 
+  /* ─── Guest mode (suspends security automations — must be loud) ── */
+  guestMode: "input_boolean.guest_mode",
+
   /* ─── Weather ────────────────────────────────────────────── */
   weather: "weather.pirateweather",
 
