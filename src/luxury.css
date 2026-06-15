@@ -1491,12 +1491,12 @@ body {
   margin-top: 6px;
 }
 .saver-wx {
-  display: inline-flex; align-items: center; gap: 10px; margin-top: 18px;
-  padding: 10px 20px; border-radius: 999px; background: rgba(255, 255, 255, 0.04);
+  display: inline-flex; align-items: center; gap: 14px; margin-top: 26px;
+  padding: 14px 28px; border-radius: 999px; background: rgba(255, 255, 255, 0.04);
   box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.16); color: var(--gold);
 }
-.saver-wx-t { font-size: 22px; font-weight: 600; font-variant-numeric: tabular-nums; }
-.saver-wx-c { font-size: 16px; font-weight: 500; color: var(--ink-mute); }
+.saver-wx-t { font-size: 34px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.saver-wx-c { font-size: 24px; font-weight: 500; color: var(--ink-mute); }
 .saver-hint {
   position: absolute; bottom: 7%; font-size: 14px; font-weight: 500; letter-spacing: 0.1em;
   text-transform: uppercase; color: var(--ink-faint); animation: saver-pulse 3s ease-in-out infinite;
