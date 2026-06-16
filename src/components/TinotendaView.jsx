@@ -25,9 +25,12 @@ function TinoCamera({ entityId }) {
   const videoRef = useRef(null);
   const gotTrack = useRef(false);
   const [tick, setTick] = useState(0);
-  const [audio, setAudio] = useState(false);
+  // Live stream + audio starts automatically on entering the tab (kiosk allows
+  // autoplay-with-sound). Tapping 🔊 drops to quiet snapshots; WebRTC failure
+  // also falls back to snapshots so the camera always shows.
+  const [audio, setAudio] = useState(true);
 
-  // snapshot refresh (default live-ish view)
+  // snapshot refresh (used while audio is off / as the fallback)
   useEffect(() => {
     if (audio) return undefined;
     const id = setInterval(() => setTick((t) => t + 1), 1000);
