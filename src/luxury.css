@@ -243,6 +243,8 @@ body {
 }
 /* system views (vacuum/power/geyser/…) have no scenes row — status bar + content */
 .lux-main.system { grid-template-rows: 92px minmax(0, 1fr); }
+/* home overview owns its whole area (its own greeting header, no status bar) */
+.lux-main.home-main { grid-template-rows: minmax(0, 1fr); }
 /* detail sub-views (lighting, weather) replace the band layout */
 .lux-detail {
   display: flex;
@@ -1546,6 +1548,62 @@ body {
   text-transform: uppercase; color: var(--ink-faint); animation: saver-pulse 3s ease-in-out infinite;
 }
 @keyframes saver-pulse { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.7; } }
+
+/* ════════════════════════════════════════════════════════
+   HOME — calm overview landing
+   ════════════════════════════════════════════════════════ */
+.home { height: 100%; min-height: 0; display: flex; flex-direction: column; gap: 18px; }
+.home-head { display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
+.home-greet { font-size: clamp(30px, 3.6vw, 48px); font-weight: 600; letter-spacing: -0.025em; line-height: 1; }
+.home-date { font-size: 15px; font-weight: 600; letter-spacing: 0.14em; color: var(--ink-mute); margin-top: 10px; }
+.home-status { display: flex; gap: 12px; }
+.home-ic {
+  position: relative; width: 52px; height: 52px; border-radius: 15px; border: none;
+  background: var(--recess); color: var(--ink-soft); display: grid; place-items: center; cursor: pointer; transition: all 0.15s;
+}
+.home-ic:hover { background: var(--recess-2); color: var(--ink); }
+.home-ic.ok { color: var(--success); }
+.home-ic.warn { color: var(--warning); }
+.home-badge {
+  position: absolute; top: -3px; right: -3px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px;
+  background: var(--critical); color: #fff; font-size: 11px; font-weight: 700; display: grid; place-items: center;
+}
+.home-label { font-size: 13px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: -8px; }
+.home .scenes-bar { height: 128px; flex-shrink: 0; }
+
+.home-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; flex-shrink: 0; }
+.ht {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 6px; min-height: 150px;
+  padding: 20px 22px; border-radius: var(--r-lg); border: none; cursor: pointer; text-align: left;
+  background: var(--surf-1); box-shadow: var(--el-1); transition: all 0.18s;
+}
+.ht:hover { transform: translateY(-2px); }
+.ht-ic { margin-bottom: 6px; color: var(--ink-mute); }
+.ht-n { font-size: 13.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ink-mute); }
+.ht-v { font-size: 27px; font-weight: 600; letter-spacing: -0.02em; margin-top: auto; }
+.ht-s { font-size: 13px; font-weight: 500; color: var(--ink-faint); text-transform: capitalize; }
+.ht.off .ht-v { color: var(--ink-soft); }
+.ht.amber  { box-shadow: var(--el-1), inset 0 0 0 1.5px rgba(212, 175, 55, 0.45); background: radial-gradient(240px 150px at 28% 0%, var(--gold-08), transparent 70%), var(--surf-1); }
+.ht.amber  .ht-ic, .ht.amber  .ht-v { color: var(--gold); }
+.ht.orange { box-shadow: var(--el-1), inset 0 0 0 1.5px rgba(232, 131, 58, 0.45); background: radial-gradient(240px 150px at 28% 0%, rgba(232, 131, 58, 0.12), transparent 70%), var(--surf-1); }
+.ht.orange .ht-ic, .ht.orange .ht-v { color: #e8833a; }
+.ht.blue   { box-shadow: var(--el-1), inset 0 0 0 1.5px rgba(90, 169, 230, 0.45); background: radial-gradient(240px 150px at 28% 0%, rgba(90, 169, 230, 0.12), transparent 70%), var(--surf-1); }
+.ht.blue   .ht-ic, .ht.blue   .ht-v { color: #5aa9e6; }
+.ht.green  { box-shadow: var(--el-1), inset 0 0 0 1.5px rgba(63, 185, 80, 0.4); background: radial-gradient(240px 150px at 28% 0%, rgba(63, 185, 80, 0.1), transparent 70%), var(--surf-1); }
+.ht.green  .ht-ic, .ht.green  .ht-v { color: var(--success); }
+.ht.red    { box-shadow: var(--el-1), inset 0 0 0 1.5px rgba(248, 81, 73, 0.5); background: radial-gradient(240px 150px at 28% 0%, rgba(248, 81, 73, 0.14), transparent 70%), var(--surf-1); animation: gm-pulse 2.4s ease-in-out infinite; }
+.ht.red    .ht-ic, .ht.red    .ht-v { color: var(--critical); }
+
+.home-bottom { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 1.6fr; gap: 16px; }
+.home-cam {
+  position: relative; border-radius: var(--r-lg); overflow: hidden; border: none; cursor: pointer; min-height: 0;
+  background: var(--recess-2); box-shadow: var(--el-1);
+}
+.home-cam img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.home-cam-ov {
+  position: absolute; left: 0; right: 0; bottom: 0; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.65)); color: #fff; font-size: 16px; font-weight: 600;
+}
 
 /* ════════════════════════════════════════════════════════
    GUEST MODE ALERT — loud, persistent (suspends security)

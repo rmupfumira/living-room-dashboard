@@ -28,6 +28,7 @@ import IrrigationView from "./components/IrrigationView";
 import PoolView from "./components/PoolView";
 import CamerasView from "./components/CamerasView";
 import TinotendaView from "./components/TinotendaView";
+import HomeView from "./components/HomeView";
 import Toast from "./components/Toast";
 import OfflineOverlay from "./components/OfflineOverlay";
 
@@ -41,7 +42,8 @@ import OfflineOverlay from "./components/OfflineOverlay";
  *     dedicated full-page components under the shared status bar.
  */
 const VIEW_PATH = {
-  kitchen: "/",
+  home: "/",
+  kitchen: "/kitchen",
   living: "/living-room",
   tinotenda: "/tinotenda",
   vacuum: "/vacuum",
@@ -57,7 +59,7 @@ const IDLE_MS = 120_000; // show the clock screensaver after 2 min untouched
 
 function viewFromPath() {
   const p = window.location.pathname.replace(/\/+$/, "") || "/";
-  return ROUTES[p] || "kitchen";
+  return ROUTES[p] || "home";
 }
 
 const SYSTEM_VIEWS = {
@@ -106,6 +108,7 @@ export default function App() {
 
   const railPick = (id) => navigate(VIEW_PATH[id] || "/");
 
+  const isHome = view === "home";
   const isRoom = ROOM_VIEWS.includes(view);
   const SystemView = SYSTEM_VIEWS[view];
   const climate = ENTITIES.climate[view]; // present for living/tinotenda → AC; absent for kitchen → geyser
@@ -124,9 +127,16 @@ export default function App() {
     <div className="lux-app">
       <Rail view={subview ? "" : view} onPick={railPick} onWifi={() => setWifiOpen(true)} />
 
-      <div className={"lux-main" + (isRoom ? "" : " system")}>
+      <div className={"lux-main" + (isHome ? " home-main" : isRoom ? "" : " system")}>
         {subview === "lighting" ? (
           <LightingView onBack={() => setSubview(null)} onToast={fireToast} />
+        ) : isHome ? (
+          <HomeView
+            name="Mupfumira"
+            onToast={fireToast}
+            onOpenSecurity={() => setDrawerOpen(true)}
+            navigate={navigate}
+          />
         ) : (
           <>
             <StatusBar

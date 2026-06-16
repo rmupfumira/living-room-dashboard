@@ -1,10 +1,12 @@
-import { ChefHat, Sofa, BedDouble, Bot, Zap, Flame, Sprout, Waves, Video, Settings, RefreshCw, Wifi } from "lucide-react";
+import { House, ChefHat, Sofa, BedDouble, Bot, Zap, Flame, Sprout, Waves, Video, Settings, RefreshCw, Wifi } from "lucide-react";
 
 /**
- * Left nav rail. Kitchen / Living / Tinotenda are room dashboards; the rest are
- * dedicated system views. Bottom: WiFi + hard-reload + settings.
+ * Left nav rail. Home is the clean overview landing; Kitchen / Living /
+ * Tinotenda are room dashboards; the rest are dedicated system views.
+ * Bottom: WiFi + hard-reload + settings.
  */
 const ROOMS = [
+  { id: "home", Icon: House, label: "Home" },
   { id: "kitchen", Icon: ChefHat, label: "Kitchen" },
   { id: "living", Icon: Sofa, label: "Living" },
   { id: "tinotenda", Icon: BedDouble, label: "Tinotenda" },
