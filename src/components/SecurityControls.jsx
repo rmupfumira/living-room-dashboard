@@ -1,5 +1,5 @@
 import * as L from "lucide-react";
-import { Shield, ShieldCheck, AlertTriangle, Check } from "lucide-react";
+import { Shield, ShieldCheck, AlertTriangle, Check, DoorOpen } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity, useHA } from "../ha/HaContext";
 import { useService } from "../ha/useService";
@@ -106,6 +106,8 @@ function ControlTile({ ctl, onToast }) {
  */
 export default function SecurityControls({ onToast }) {
   const { entities } = useHA();
+  const call = useService();
+  const confirm = useConfirm();
 
   const watched = ENTITIES.securityControls.filter((c) => !c.ignore);
   const openItems = watched.filter((c) => {
@@ -114,11 +116,26 @@ export default function SecurityControls({ onToast }) {
   });
   const allSecure = openItems.length === 0;
 
+  const letVisitorIn = async () => {
+    const ok = await confirm({
+      title: "Let visitor in?",
+      message: "This disarms the outdoor alarm, unlocks the front door, and opens the screen gate.",
+      confirmLabel: "Let in",
+      danger: true,
+    });
+    if (!ok) return;
+    onToast?.("door-open", "Letting visitor in…");
+    call("script", "turn_on", {}, { entity_id: ENTITIES.entryScript });
+  };
+
   return (
     <div className={"secctls rise" + (allSecure ? " is-secure" : " is-alert")}>
       <div className="secctls-head">
         <Shield size={16} strokeWidth={2} color="var(--gold)" />
         <span className="sect-title">Security</span>
+        <button type="button" className="secctls-entry" onClick={letVisitorIn}>
+          <DoorOpen size={15} strokeWidth={2.2} /> Let In
+        </button>
         <div className={"secctls-verdict " + (allSecure ? "ok" : "warn")}>
           {allSecure ? (
             <>
