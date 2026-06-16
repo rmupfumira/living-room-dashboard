@@ -85,7 +85,7 @@ function ControlTile({ ctl, onToast }) {
       }}
     >
       <div className="secctl-ic">
-        <Icon size={22} strokeWidth={2} />
+        <Icon size={19} strokeWidth={2} />
       </div>
       <div className="secctl-meta">
         <div className="secctl-n">{ctl.name}</div>
@@ -116,15 +116,15 @@ export default function SecurityControls({ onToast }) {
   });
   const allSecure = openItems.length === 0;
 
-  const letVisitorIn = async () => {
+  const openFrontDoor = async () => {
     const ok = await confirm({
-      title: "Let visitor in?",
+      title: "Open the front door?",
       message: "This disarms the outdoor alarm, unlocks the front door, and opens the screen gate.",
-      confirmLabel: "Let in",
+      confirmLabel: "Open",
       danger: true,
     });
     if (!ok) return;
-    onToast?.("door-open", "Letting visitor in…");
+    onToast?.("door-open", "Opening front door…");
     call("script", "turn_on", {}, { entity_id: ENTITIES.entryScript });
   };
 
@@ -133,9 +133,6 @@ export default function SecurityControls({ onToast }) {
       <div className="secctls-head">
         <Shield size={16} strokeWidth={2} color="var(--gold)" />
         <span className="sect-title">Security</span>
-        <button type="button" className="secctls-entry" onClick={letVisitorIn}>
-          <DoorOpen size={15} strokeWidth={2.2} /> Let In
-        </button>
         <div className={"secctls-verdict " + (allSecure ? "ok" : "warn")}>
           {allSecure ? (
             <>
@@ -155,6 +152,10 @@ export default function SecurityControls({ onToast }) {
           <ControlTile key={c.id} ctl={c} onToast={onToast} />
         ))}
       </div>
+
+      <button type="button" className="secctls-open" onClick={openFrontDoor}>
+        <DoorOpen size={18} strokeWidth={2.2} /> Open Front Door
+      </button>
     </div>
   );
 }
