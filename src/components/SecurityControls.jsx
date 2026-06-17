@@ -6,7 +6,7 @@ import { useService } from "../ha/useService";
 import { useConfirm } from "./Confirm";
 
 // The verb for the security-reducing direction of each control kind.
-const UNSECURE_VERB = { alarm: "Disarm", cover: "Open", lock: "Unlock", switch: "Unlock" };
+const UNSECURE_VERB = { alarm: "Disarm", cover: "Open", lock: "Unlock", switch: "Unlock", gate: "Open" };
 
 function toPascal(name) {
   return String(name).split(/[-_]/).map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join("");
@@ -33,6 +33,11 @@ function statusOf(ctl, state) {
     const on = state === "on";
     return { secure: on, unavail, label: on ? (ctl.onLabel || "On") : (ctl.offLabel || "Off") };
   }
+  if (ctl.kind === "gate") {
+    // status from the gate's own status sensor (Closed/Open/…); closed === secure
+    const closed = (state || "").toLowerCase() === "closed";
+    return { secure: closed, unavail, label: state || "—" };
+  }
   const locked = state === "locked";
   return { secure: locked, unavail, label: locked ? "Locked" : "Unlocked" };
 }
@@ -44,7 +49,7 @@ function statusOf(ctl, state) {
  *   muted                    → unavailable, or an `ignore` tile (e.g. indoor alarm)
  */
 function ControlTile({ ctl, onToast }) {
-  const ent = useEntity(ctl.entity);
+  const ent = useEntity(ctl.statusEntity || ctl.entity);
   const call = useService();
   const confirm = useConfirm();
   const Icon = L[toPascal(ctl.icon)] || Shield;
@@ -59,6 +64,8 @@ function ControlTile({ ctl, onToast }) {
       call("cover", secure ? "open_cover" : "close_cover", {}, { entity_id: ctl.entity });
     } else if (ctl.kind === "switch") {
       call("switch", "toggle", {}, { entity_id: ctl.entity });
+    } else if (ctl.kind === "gate") {
+      call("cover", secure ? "open_cover" : "close_cover", {}, { entity_id: ctl.entity });
     } else {
       call("lock", secure ? "unlock" : "lock", {}, { entity_id: ctl.entity });
     }
