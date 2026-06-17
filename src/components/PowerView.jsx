@@ -44,10 +44,11 @@ export default function PowerView() {
     },
   ];
 
-  // Only devices actually drawing power (hide 0 W / offline), highest first.
+  // Only devices meaningfully drawing power (hide standby/trickle + offline), highest first.
+  const MIN_W = 5;
   const devices = P.devices
     .map((d) => ({ name: d.name, w: num(entities[d.entity]) }))
-    .filter((d) => Number.isFinite(d.w) && d.w > 0)
+    .filter((d) => Number.isFinite(d.w) && d.w >= MIN_W)
     .sort((a, b) => b.w - a.w);
   const maxW = Math.max(1, ...devices.map((d) => d.w));
 
