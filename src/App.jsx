@@ -153,17 +153,17 @@ export default function App() {
                   </div>
 
                   <div className="lux-col">
-                    <LightingCard
-                      config={ENTITIES.lighting[view]}
-                      onToast={fireToast}
-                      onOpenLighting={() => setSubview("lighting")}
-                    />
+                    <SecurityControls onToast={fireToast} />
                     {climate ? (
                       <ClimateCard acEntity={climate.ac} tempEntity={climate.temp} onToast={fireToast} />
                     ) : (
                       <GeyserCard onToast={fireToast} />
                     )}
-                    <SecurityControls onToast={fireToast} />
+                    <LightingCard
+                      config={ENTITIES.lighting[view]}
+                      onToast={fireToast}
+                      onOpenLighting={() => setSubview("lighting")}
+                    />
                   </div>
 
                   <div className="lux-col">

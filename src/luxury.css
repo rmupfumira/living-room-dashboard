@@ -840,14 +840,16 @@ body {
 }
 .secctls-head { display: flex; align-items: center; gap: 9px; }
 .secctls-head > svg, .secctls-head .sect-title { flex-shrink: 0; }
-/* "Open Front Door" — full-width action (disarms + unlocks + opens, confirmed) */
+/* Prominent front-entry actions (disarm + open) — side-by-side, confirmed */
+.secctls-actions { flex-shrink: 0; display: flex; gap: 10px; }
 .secctls-open {
-  flex-shrink: 0; width: 100%; height: 46px; border: none; border-radius: var(--r-md); cursor: pointer;
-  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-  font-family: var(--font); font-size: 15px; font-weight: 700; letter-spacing: 0.01em;
+  flex: 1; min-width: 0; height: 46px; border: none; border-radius: var(--r-md); cursor: pointer;
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap;
+  font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: 0.01em;
   background: linear-gradient(135deg, var(--gold), var(--gold-deep, #a9842c)); color: #1a1505;
   box-shadow: var(--gold-glow-soft); transition: all 0.15s;
 }
+.secctls-open svg { flex-shrink: 0; }
 .secctls-open:hover { box-shadow: var(--gold-glow); transform: translateY(-1px); }
 .secctls-open:active { transform: translateY(0); }
 /* the card gets a quiet accent that matches the verdict */

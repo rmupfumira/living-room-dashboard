@@ -1,12 +1,12 @@
 import * as L from "lucide-react";
-import { Shield, ShieldCheck, AlertTriangle, Check, DoorOpen } from "lucide-react";
+import { Shield, ShieldCheck, AlertTriangle, Check, DoorOpen, Fence } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity, useHA } from "../ha/HaContext";
 import { useService } from "../ha/useService";
 import { useConfirm } from "./Confirm";
 
 // The verb for the security-reducing direction of each control kind.
-const UNSECURE_VERB = { alarm: "Disarm", cover: "Open", lock: "Unlock" };
+const UNSECURE_VERB = { alarm: "Disarm", cover: "Open", lock: "Unlock", switch: "Unlock" };
 
 function toPascal(name) {
   return String(name).split(/[-_]/).map((p) => p.charAt(0).toUpperCase() + p.slice(1)).join("");
@@ -27,6 +27,11 @@ function statusOf(ctl, state) {
   if (ctl.kind === "cover") {
     const open = /^(open|opening)$/i.test(state || "");
     return { secure: !open, unavail, label: open ? "Open" : "Closed" };
+  }
+  if (ctl.kind === "switch") {
+    // a switch-backed lock (e.g. the gate lock): on === locked === secure
+    const on = state === "on";
+    return { secure: on, unavail, label: on ? (ctl.onLabel || "On") : (ctl.offLabel || "Off") };
   }
   const locked = state === "locked";
   return { secure: locked, unavail, label: locked ? "Locked" : "Unlocked" };
@@ -52,6 +57,8 @@ function ControlTile({ ctl, onToast }) {
       call("alarm_control_panel", secure ? "alarm_disarm" : "alarm_arm_away", {}, { entity_id: ctl.entity });
     } else if (ctl.kind === "cover") {
       call("cover", secure ? "open_cover" : "close_cover", {}, { entity_id: ctl.entity });
+    } else if (ctl.kind === "switch") {
+      call("switch", "toggle", {}, { entity_id: ctl.entity });
     } else {
       call("lock", secure ? "unlock" : "lock", {}, { entity_id: ctl.entity });
     }
@@ -128,6 +135,18 @@ export default function SecurityControls({ onToast }) {
     call("script", "turn_on", {}, { entity_id: ENTITIES.entryScript });
   };
 
+  const openGate = async () => {
+    const ok = await confirm({
+      title: "Open the gate?",
+      message: "This disarms the outdoor alarm and opens the gate.",
+      confirmLabel: "Open",
+      danger: true,
+    });
+    if (!ok) return;
+    onToast?.("door-open", "Opening gate…");
+    call("script", "turn_on", {}, { entity_id: ENTITIES.gateScript });
+  };
+
   return (
     <div className={"secctls rise" + (allSecure ? " is-secure" : " is-alert")}>
       <div className="secctls-head">
@@ -153,9 +172,14 @@ export default function SecurityControls({ onToast }) {
         ))}
       </div>
 
-      <button type="button" className="secctls-open" onClick={openFrontDoor}>
-        <DoorOpen size={18} strokeWidth={2.2} /> Open Front Door
-      </button>
+      <div className="secctls-actions">
+        <button type="button" className="secctls-open" onClick={openFrontDoor}>
+          <DoorOpen size={17} strokeWidth={2.2} /> Open Front Door
+        </button>
+        <button type="button" className="secctls-open" onClick={openGate}>
+          <Fence size={17} strokeWidth={2.2} /> Open Gate
+        </button>
+      </div>
     </div>
   );
 }

@@ -83,9 +83,10 @@ export const ENTITIES = {
   /* ─── Guest mode (suspends security automations — must be loud) ── */
   guestMode: "input_boolean.guest_mode",
 
-  /* ─── "Open Front Door" — HA script: disarm outdoor alarm → unlock front
-     door → open screen gate. Triggered by the Security card's button. */
-  entryScript: "script.open_front_door",
+  /* ─── Front-entry HA scripts (disarm outdoor alarm first) — triggered by the
+     prominent buttons on the Security card. */
+  entryScript: "script.open_front_door",   // disarm → unlock front door → open screen gate
+  gateScript: "script.open_gate",          // disarm → open the gate
 
   /* ─── Weather ────────────────────────────────────────────── */
   weather: "weather.pirateweather",
@@ -170,7 +171,7 @@ export const ENTITIES = {
   securityControls: [
     { id: "outdoorAlarm", name: "Outdoor Alarm", icon: "siren", entity: "alarm_control_panel.partition_outdoor", kind: "alarm" },
     { id: "indoorAlarm", name: "Indoor Alarm", icon: "shield", entity: "alarm_control_panel.partition_indoor", kind: "alarm", ignore: true },
-    { id: "gate", name: "Gate", icon: "fence", entity: "cover.centurion_gate_gate", kind: "cover" },
+    { id: "gate", name: "Gate", icon: "fence", entity: "switch.centurion_gate_lock", kind: "switch", onLabel: "Locked", offLabel: "Unlocked" },
     { id: "garage", name: "Garage Door", icon: "warehouse", entity: "cover.garage_door_z2m", kind: "cover" },
     { id: "frontDoor", name: "Front Door", icon: "door-closed", entity: "lock.front_door_lock", kind: "lock" },
     { id: "screenGate", name: "Screen Gate", icon: "fence", entity: "cover.screen_gate", kind: "cover" },
