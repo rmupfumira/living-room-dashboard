@@ -1,5 +1,4 @@
-import { Sun, House, UtilityPole, Zap, Leaf, Plug, AlertTriangle,
-  Battery, BatteryLow, BatteryMedium, BatteryFull, BatteryCharging, BatteryWarning } from "lucide-react";
+import { Sun, House, Zap, AlertTriangle, Battery, BatteryLow, BatteryMedium, BatteryFull, BatteryCharging, BatteryWarning } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity, useHA } from "../ha/HaContext";
 
@@ -20,7 +19,7 @@ function batteryVisual(soc, charging) {
   return { Icon: BatteryWarning, color: "var(--critical)" };
 }
 
-/** Full-page Power / Energy view — aggregate + per-device usage. */
+/** Full-page Power view — Solar/Load/Battery heroes + a big live Device Usage list. */
 export default function PowerView() {
   const P = ENTITIES.power;
   const { entities } = useHA();
@@ -28,19 +27,11 @@ export default function PowerView() {
   const load = useEntity(P.loadPower);
   const soc = useEntity(P.batterySoc);
   const battP = useEntity(P.batteryPower);
-  const grid = useEntity(P.gridPower);
-  const pvToday = useEntity(P.pvToday);
-  const loadToday = useEntity(P.loadToday);
-  const self = useEntity(P.selfSufficiency);
-  const impToday = useEntity(P.gridImportToday);
-  const expToday = useEntity(P.gridExportToday);
   const ssStage = useEntity(ENTITIES.loadShedding.stage);
   const ssCal = useEntity(ENTITIES.loadShedding.forecast);
 
-  const gridKw = toKw(grid);
   const battKw = toKw(battP);
   const socPct = num(soc);
-  const importing = gridKw > 0.05, exporting = gridKw < -0.05;
   const charging = battKw > 0.05, discharging = battKw < -0.05;
   const bv = batteryVisual(socPct, charging);
 
@@ -53,21 +44,12 @@ export default function PowerView() {
     },
   ];
 
-  const stats = [
-    { Icon: UtilityPole, k: importing ? "Importing" : exporting ? "Exporting" : "Grid", v: f1(gridKw), u: "kW",
-      color: importing ? "var(--warning)" : exporting ? "var(--success)" : "var(--ink-soft)" },
-    { Icon: Leaf, k: "Self-sufficiency", v: Number.isFinite(num(self)) ? Math.round(num(self)) : "—", u: "%", color: "var(--success)" },
-    { Icon: Sun, k: "Solar today", v: Number.isFinite(num(pvToday)) ? f1(num(pvToday)) : "—", u: "kWh", color: "var(--gold)" },
-    { Icon: Plug, k: "Used today", v: Number.isFinite(num(loadToday)) ? f1(num(loadToday)) : "—", u: "kWh", color: "var(--ink-soft)" },
-    { Icon: UtilityPole, k: "Imported today", v: Number.isFinite(num(impToday)) ? f1(num(impToday)) : "—", u: "kWh", color: "var(--warning)" },
-    { Icon: UtilityPole, k: "Exported today", v: Number.isFinite(num(expToday)) ? f1(num(expToday)) : "—", u: "kWh", color: "var(--success)" },
-  ];
-
-  // Per-device usage (W), sorted live by current draw; offline → end.
+  // Only devices actually drawing power (hide 0 W / offline), highest first.
   const devices = P.devices
     .map((d) => ({ name: d.name, w: num(entities[d.entity]) }))
-    .sort((a, b) => (Number.isFinite(b.w) ? b.w : -1) - (Number.isFinite(a.w) ? a.w : -1));
-  const maxW = Math.max(1, ...devices.map((d) => (Number.isFinite(d.w) ? d.w : 0)));
+    .filter((d) => Number.isFinite(d.w) && d.w > 0)
+    .sort((a, b) => b.w - a.w);
+  const maxW = Math.max(1, ...devices.map((d) => d.w));
 
   const stageNum = num(ssStage);
   const loadShedActive = Number.isFinite(stageNum) && stageNum > 0;
@@ -98,36 +80,23 @@ export default function PowerView() {
         ))}
       </div>
 
-      <div className="pw-lower">
-        <div className="pw-stats">
-          {stats.map((s, i) => (
-            <div key={i} className="pw-stat">
-              <div className="pw-stat-ic" style={{ color: s.color }}><s.Icon size={18} strokeWidth={2} /></div>
-              <div className="pw-stat-meta">
-                <div className="pw-stat-v tabular">{s.v}<span className="u">{s.u}</span></div>
-                <div className="pw-stat-k">{s.k}</div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="pw-devices">
-          <div className="pw-dev-h">Device usage</div>
-          <div className="pw-dev-list">
-            {devices.map((d) => {
-              const on = Number.isFinite(d.w) && d.w > 0.5;
-              const pct = Number.isFinite(d.w) ? Math.max(0, Math.min(100, (d.w / maxW) * 100)) : 0;
+      <div className="pw-devices">
+        <div className="pw-dev-h">Device usage · live</div>
+        <div className="pw-dev-list">
+          {devices.length ? (
+            devices.map((d) => {
+              const pct = Math.max(4, Math.min(100, (d.w / maxW) * 100));
               return (
-                <div key={d.name} className={"pw-dev" + (on ? "" : " idle")}>
+                <div key={d.name} className="pw-dev">
                   <span className="pw-dev-n">{d.name}</span>
                   <div className="pw-dev-track"><div className="pw-dev-fill" style={{ width: pct + "%" }} /></div>
-                  <span className="pw-dev-v tabular">
-                    {Number.isFinite(d.w) ? Math.round(d.w) : "—"}<span className="u">W</span>
-                  </span>
+                  <span className="pw-dev-v tabular">{Math.round(d.w)}<span className="u">W</span></span>
                 </div>
               );
-            })}
-          </div>
+            })
+          ) : (
+            <div className="pw-dev-empty">Nothing drawing power right now</div>
+          )}
         </div>
       </div>
     </div>
