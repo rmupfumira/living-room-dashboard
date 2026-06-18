@@ -130,6 +130,12 @@ export default function SecurityControls({ onToast }) {
   });
   const allSecure = openItems.length === 0;
 
+  // Fire a script or automation by entity_id (automations use trigger, not turn_on).
+  const fire = (entity) => {
+    const domain = entity.split(".")[0];
+    call(domain, domain === "automation" ? "trigger" : "turn_on", {}, { entity_id: entity });
+  };
+
   const openFrontDoor = async () => {
     const ok = await confirm({
       title: "Open the front door?",
@@ -139,7 +145,7 @@ export default function SecurityControls({ onToast }) {
     });
     if (!ok) return;
     onToast?.("door-open", "Opening front door…");
-    call("script", "turn_on", {}, { entity_id: ENTITIES.entryScript });
+    fire(ENTITIES.entryScript);
   };
 
   const openGate = async () => {
@@ -151,7 +157,7 @@ export default function SecurityControls({ onToast }) {
     });
     if (!ok) return;
     onToast?.("door-open", "Opening gate…");
-    call("script", "turn_on", {}, { entity_id: ENTITIES.gateScript });
+    fire(ENTITIES.gateScript);
   };
 
   return (
