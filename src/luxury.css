@@ -1037,6 +1037,101 @@ body {
 }
 .scene-btn.on .scene-ic { background: linear-gradient(135deg, var(--gold), var(--gold-deep)); color: #1a1505; box-shadow: var(--gold-glow-soft); }
 
+/* per-scene accent tones (kitchen mockup) */
+.scene-btn.tone-amber   { --acc: #e8b04a; --acc-bg: rgba(232, 176, 74, 0.13); }
+.scene-btn.tone-indigo  { --acc: #818bff; --acc-bg: rgba(129, 139, 255, 0.15); }
+.scene-btn.tone-teal    { --acc: #34d4c0; --acc-bg: rgba(52, 212, 192, 0.13); }
+.scene-btn.tone-magenta { --acc: #d96ae0; --acc-bg: rgba(217, 106, 224, 0.15); }
+.scene-btn.tone-slate   { --acc: #9aa3b4; --acc-bg: rgba(154, 163, 180, 0.12); }
+.scene-btn[class*="tone-"] { background: var(--acc-bg); color: var(--ink-soft); }
+.scene-btn[class*="tone-"] .scene-ic { background: var(--acc-bg); color: var(--acc); }
+.scene-btn[class*="tone-"]:hover { color: var(--ink); transform: translateY(-1px); }
+.scene-btn[class*="tone-"].on {
+  color: #fff; transform: translateY(-2px); outline: 1px solid var(--acc);
+  box-shadow: 0 0 24px -4px var(--acc), 0 8px 22px -8px var(--acc);
+}
+.scene-btn[class*="tone-"].on .scene-ic { background: var(--acc); color: #0e0e0e; }
+
+/* ════════════════════════════════════════════════════════
+   KITCHEN TAB — Now Playing · Doorbell · Lighting · Security · Weather
+   ════════════════════════════════════════════════════════ */
+.kv { display: flex; flex-direction: column; gap: 12px; min-height: 0; height: 100%; }
+.kv-top { flex: 1.5; min-height: 0; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.12fr); gap: 12px; }
+.kv-bottom { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; }
+.kv-bottom .klx { border-radius: var(--r-lg); min-height: 0; }
+
+/* Now Playing (Music Assistant) */
+.nowp { background: var(--surf-1); box-shadow: var(--el-1); border-radius: var(--r-lg); padding: 20px 22px; display: flex; flex-direction: column; gap: 14px; min-height: 0; }
+.nowp-h { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); flex-shrink: 0; }
+.nowp-main { display: flex; align-items: center; gap: 20px; min-height: 0; flex: 1; }
+.nowp-art { width: 124px; height: 124px; flex-shrink: 0; border-radius: var(--r-md); overflow: hidden; background: var(--recess-2); display: grid; place-items: center; color: var(--ink-faint); box-shadow: var(--el-2); }
+.nowp-art img { width: 100%; height: 100%; object-fit: cover; }
+.nowp-info { min-width: 0; }
+.nowp-title { font-size: 27px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+.nowp-artist { font-size: 19px; font-weight: 500; color: var(--ink-soft); margin-top: 5px; }
+.nowp-album { font-size: 15px; font-weight: 500; color: var(--gold); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nowp-ctrls { display: flex; align-items: center; justify-content: center; gap: 24px; flex-shrink: 0; }
+.nowp-btn { width: 52px; height: 52px; border-radius: 50%; border: none; cursor: pointer; background: transparent; color: var(--ink-soft); display: grid; place-items: center; transition: all 0.16s; }
+.nowp-btn:hover { color: var(--ink); background: var(--recess); }
+.nowp-btn.play { width: 66px; height: 66px; border: 2px solid var(--gold); color: var(--gold); }
+.nowp-btn.play:hover { background: var(--gold-12); box-shadow: var(--gold-glow-soft); }
+.nowp-btn:disabled { opacity: 0.4; cursor: default; }
+.nowp-vol { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+.nowp-vol .klx-slider { flex: 1; height: 6px; }
+.nowp-dev { position: relative; flex-shrink: 0; }
+.nowp-dev-btn { width: 100%; display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: var(--r-md); border: none; background: var(--recess); color: var(--ink-soft); font-family: var(--font); font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.16s; }
+.nowp-dev-btn > span { flex: 1; text-align: left; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.nowp-dev-btn:hover { background: var(--recess-2); color: var(--ink); }
+.nowp-dev-btn .flip { transform: rotate(180deg); }
+.nowp-pick { position: absolute; bottom: calc(100% + 6px); left: 0; right: 0; background: var(--surf-2); border-radius: var(--r-md); box-shadow: var(--el-pop); padding: 6px; display: flex; flex-direction: column; gap: 2px; z-index: 20; }
+.nowp-pick-i { display: flex; align-items: center; gap: 10px; padding: 11px 12px; border-radius: 10px; border: none; background: transparent; color: var(--ink-soft); font-family: var(--font); font-size: 15px; font-weight: 600; cursor: pointer; text-align: left; }
+.nowp-pick-i > span { flex: 1; }
+.nowp-pick-i:hover { background: var(--recess); color: var(--ink); }
+.nowp-pick-i.on { color: var(--gold); }
+
+/* Doorbell / camera card */
+.dbl { background: var(--surf-1); box-shadow: var(--el-1); border-radius: var(--r-lg); padding: 20px 22px; display: flex; flex-direction: column; gap: 12px; min-height: 0; }
+.dbl-h { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.dbl-h .sect-title { color: var(--gold); }
+.dbl-live { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--critical); }
+.dbl-view { position: relative; flex: 1; min-height: 0; border-radius: var(--r-md); overflow: hidden; background: var(--recess-2); cursor: pointer; }
+.dbl-view img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.dbl-expand { position: absolute; top: 10px; right: 10px; width: 38px; height: 38px; border-radius: 50%; border: none; cursor: pointer; background: rgba(0, 0, 0, 0.5); color: #fff; display: grid; place-items: center; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); transition: background 0.16s; }
+.dbl-expand:hover { background: rgba(0, 0, 0, 0.72); }
+.dbl-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; flex-shrink: 0; }
+.dbl-tab { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 13px 8px; border-radius: var(--r-md); border: none; cursor: pointer; background: var(--recess); color: var(--ink-soft); font-family: var(--font); font-size: 16px; font-weight: 600; transition: all 0.16s; }
+.dbl-tab:hover { background: var(--recess-2); color: var(--ink); }
+.dbl-tab.on { background: var(--gold-12); color: var(--gold-bright); box-shadow: inset 0 0 0 1px var(--gold-18); }
+
+/* full-screen camera popup */
+.cam-modal { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; padding: 4vh 4vw; background: rgba(0, 0, 0, 0.78); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); animation: led-fade 0.16s ease; }
+.cam-modal-inner { width: min(1100px, 94%); display: flex; flex-direction: column; gap: 14px; }
+.cam-modal-h { display: flex; align-items: center; justify-content: space-between; color: var(--ink); }
+.cam-modal-h > span { display: inline-flex; align-items: center; gap: 10px; font-size: 22px; font-weight: 600; }
+.cam-modal-h > span svg { color: var(--gold); }
+.cam-modal-x { width: 44px; height: 44px; border-radius: 50%; border: none; cursor: pointer; background: var(--recess); color: var(--ink-soft); display: grid; place-items: center; transition: all 0.16s; }
+.cam-modal-x:hover { background: var(--recess-2); color: var(--ink); }
+.cam-modal-view { position: relative; width: 100%; aspect-ratio: 16 / 9; max-height: 70vh; border-radius: var(--r-lg); overflow: hidden; background: var(--recess-2); box-shadow: var(--el-pop); }
+.cam-modal-view img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Security / Weather summary cards */
+.ksum { background: var(--surf-1); box-shadow: var(--el-1); border-radius: var(--r-lg); padding: 18px 20px; display: flex; flex-direction: column; gap: 8px; min-height: 0; cursor: pointer; transition: background 0.18s; }
+.ksum:hover { background: var(--surf-2); }
+.ksum-h { font-size: 13px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-mute); flex-shrink: 0; }
+.ksum-body { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; text-align: center; }
+.ksum-ic { color: var(--ink-mute); }
+.ksum-sec.secure .ksum-ic { color: var(--success); filter: drop-shadow(0 0 14px rgba(63, 185, 80, 0.35)); }
+.ksum-sec.attn .ksum-ic { color: var(--warning); }
+.ksum-t { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
+.ksum-sec.secure .ksum-t { color: var(--success); }
+.ksum-sec.attn .ksum-t { color: var(--warning); }
+.ksum-s { font-size: 15px; font-weight: 500; color: var(--ink-mute); }
+.ksum-wx { flex: 1; display: flex; align-items: center; justify-content: center; gap: 16px; }
+.ksum-wx-ic { color: var(--gold); filter: drop-shadow(0 2px 16px rgba(212, 175, 55, 0.4)); flex-shrink: 0; }
+.ksum-wx-temp { font-size: 44px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.ksum-wx-cond { font-size: 17px; font-weight: 500; color: var(--ink-soft); margin-top: 4px; }
+.ksum-wx-hl { font-size: 14px; font-weight: 500; color: var(--ink-mute); margin-top: 6px; }
+
 /* ════════════════════════════════════════════════════════
    DETAIL SUB-VIEWS (lighting, weather)
    ════════════════════════════════════════════════════════ */

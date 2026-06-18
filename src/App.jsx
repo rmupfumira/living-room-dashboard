@@ -29,6 +29,7 @@ import PoolView from "./components/PoolView";
 import CamerasView from "./components/CamerasView";
 import TinotendaView from "./components/TinotendaView";
 import HomeView from "./components/HomeView";
+import KitchenView from "./components/KitchenView";
 import Toast from "./components/Toast";
 import OfflineOverlay from "./components/OfflineOverlay";
 
@@ -146,35 +147,47 @@ export default function App() {
             />
 
             {isRoom ? (
-              <>
-                <div className="lux-grid">
-                  <div className="lux-col">
-                    <CamerasCard onToast={fireToast} />
+              view === "kitchen" ? (
+                <>
+                  <KitchenView
+                    onToast={fireToast}
+                    onOpenLighting={() => setSubview("lighting")}
+                    onOpenSecurity={() => setDrawerOpen(true)}
+                    onOpenWeather={() => setWeatherOpen(true)}
+                  />
+                  <ScenesBar onToast={fireToast} />
+                </>
+              ) : (
+                <>
+                  <div className="lux-grid">
+                    <div className="lux-col">
+                      <CamerasCard onToast={fireToast} />
+                    </div>
+
+                    <div className="lux-col">
+                      <SecurityControls onToast={fireToast} />
+                      {climate ? (
+                        <ClimateCard acEntity={climate.ac} tempEntity={climate.temp} onToast={fireToast} />
+                      ) : (
+                        <GeyserCard onToast={fireToast} />
+                      )}
+                      <LightingCard
+                        config={ENTITIES.lighting[view]}
+                        onToast={fireToast}
+                        onOpenLighting={() => setSubview("lighting")}
+                      />
+                    </div>
+
+                    <div className="lux-col">
+                      <SolarCard />
+                      <LaundryCard />
+                      <MediaCard onToast={fireToast} />
+                    </div>
                   </div>
 
-                  <div className="lux-col">
-                    <SecurityControls onToast={fireToast} />
-                    {climate ? (
-                      <ClimateCard acEntity={climate.ac} tempEntity={climate.temp} onToast={fireToast} />
-                    ) : (
-                      <GeyserCard onToast={fireToast} />
-                    )}
-                    <LightingCard
-                      config={ENTITIES.lighting[view]}
-                      onToast={fireToast}
-                      onOpenLighting={() => setSubview("lighting")}
-                    />
-                  </div>
-
-                  <div className="lux-col">
-                    <SolarCard />
-                    <LaundryCard />
-                    <MediaCard onToast={fireToast} />
-                  </div>
-                </div>
-
-                <ScenesBar onToast={fireToast} />
-              </>
+                  <ScenesBar onToast={fireToast} />
+                </>
+              )
             ) : (
               SystemView && <SystemView onToast={fireToast} />
             )}

@@ -20,7 +20,7 @@ function SceneBtn({ scene, onActivate }) {
   const on = domain === "input_boolean" && !scene.momentary && ent?.state === "on";
 
   return (
-    <button type="button" className={"scene-btn" + (on ? " on" : "")} onClick={() => onActivate(scene)}>
+    <button type="button" className={"scene-btn" + (scene.tone ? " tone-" + scene.tone : "") + (on ? " on" : "")} onClick={() => onActivate(scene)}>
       <span className="scene-ic">
         <Icon size={18} strokeWidth={2} />
       </span>

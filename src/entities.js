@@ -73,11 +73,11 @@ export const ENTITIES = {
      that HA automations listen to (no persistent highlight). guest/movie/
      silent are persistent MODES — they toggle and light up while active. */
   scenes: [
-    { id: "morning", name: "Good Morning", icon: "sunrise",      entity: "input_boolean.good_morning", momentary: true },
-    { id: "night",   name: "Night",        icon: "moon",         entity: "input_boolean.good_night",   momentary: true },
-    { id: "guest",   name: "Guest",        icon: "users",        entity: "input_boolean.guest_mode" },
-    { id: "movie",   name: "Movie",        icon: "clapperboard", entity: "input_boolean.movie_scene" },
-    { id: "silent",  name: "Silent",       icon: "volume-x",     entity: "input_boolean.dont_disturb" },
+    { id: "morning", name: "Good Morning", icon: "sunrise",      entity: "input_boolean.good_morning", momentary: true, tone: "amber" },
+    { id: "night",   name: "Good Night",   icon: "moon",         entity: "input_boolean.good_night",   momentary: true, tone: "indigo" },
+    { id: "guest",   name: "Guest",        icon: "users",        entity: "input_boolean.guest_mode",   tone: "teal" },
+    { id: "movie",   name: "Movie",        icon: "clapperboard", entity: "input_boolean.movie_scene",  tone: "magenta" },
+    { id: "silent",  name: "Silent",       icon: "volume-x",     entity: "input_boolean.dont_disturb", tone: "slate" },
   ],
 
   /* ─── Guest mode (suspends security automations — must be loud) ── */
@@ -91,12 +91,29 @@ export const ENTITIES = {
   /* ─── Weather ────────────────────────────────────────────── */
   weather: "weather.pirateweather",
 
-  /* ─── Cameras (3 large previews) ─────────────────────────── */
+  /* ─── Cameras (kitchen doorbell card — switchable feed) ──── */
   cameras: [
-    { id: "doorbell", name: "Front Door", entity: "camera.doorbell_frigate" },
-    { id: "pool", name: "Swimming Pool", entity: "camera.swimming_pool_frigate" },
-    { id: "garage", name: "Garage", entity: "camera.garage_cam_frigate" },
+    { id: "doorbell", name: "Front Door", icon: "door-open", entity: "camera.doorbell_frigate" },
+    { id: "pool", name: "Pool", icon: "waves", entity: "camera.swimming_pool_frigate" },
+    { id: "garage", name: "Garage", icon: "warehouse", entity: "camera.garage_cam_frigate" },
   ],
+
+  /* ─── Music Assistant (kitchen Now-Playing card) ─────────────
+     These are Music Assistant players (config entry 01KTS5…, platform
+     music_assistant) — verified vs HA 2026-06-18. Default = the scullery
+     speaker (kitchen zone); the card's device picker switches the controlled
+     player. NB: many same-named media_players exist from cast/apple_tv — only
+     the IDs below are the MA ones, so transport/queue actually work. */
+  music: {
+    default: "media_player.scullery_speaker",
+    players: [
+      { id: "scullery", name: "Kitchen · Scullery", entity: "media_player.scullery_speaker" },
+      { id: "all",      name: "All Speakers",        entity: "media_player.all_speakers_3" },
+      { id: "office",   name: "Office",              entity: "media_player.office_speaker" },
+      { id: "main_bed", name: "Main Bedroom",        entity: "media_player.main_bedroom_speaker" },
+      { id: "master",   name: "Master Bedroom",      entity: "media_player.master_bedroom_2_2" },
+    ],
+  },
 
   /* ─── Kitchen lighting ───────────────────────────────────── */
   /* WLED cabinet/island/peninsula strips. `ledGroup` is the HA light group
