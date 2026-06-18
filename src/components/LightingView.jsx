@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { ArrowLeft, Power, Palette, Sparkles, Gauge, Activity, Search, X, SlidersHorizontal, Layers } from "lucide-react";
+import { ArrowLeft, Power, Palette, Sparkles, Gauge, Activity, Search, X, SlidersHorizontal, Layers, RotateCcw } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity, useHA } from "../ha/HaContext";
 import { useService } from "../ha/useService";
@@ -67,6 +67,15 @@ function LedControls({ target, onToast }) {
   const setSpeed = (p) => call("number", "set_value", { value: to255(p) }, { entity_id: target.speeds });
   const setIntensity = (p) => call("number", "set_value", { value: to255(p) }, { entity_id: target.intensities });
 
+  // Restore a calm default: warm white, 70%, solid, Default palette, mid speed/intensity.
+  const resetDefault = () => {
+    onToast?.("rotate-ccw", "Reset to default");
+    lightOn({ rgb_color: [255, 170, 90], brightness_pct: 70, effect: "Solid" });
+    setPalette("Default");
+    setSpeed(50);
+    setIntensity(50);
+  };
+
   return (
     <div className={"led-ctl" + (unavail ? " unavail" : "")}>
       <div className="led-row">
@@ -91,6 +100,9 @@ function LedControls({ target, onToast }) {
           aria-label="Brightness"
         />
         <span className="led-bri-v tabular">{bri}%</span>
+        <button type="button" className="led-reset" onClick={resetDefault} disabled={unavail} title="Reset to default">
+          <RotateCcw size={15} strokeWidth={2.2} /> Default
+        </button>
       </div>
 
       <div className="led-swatches">
