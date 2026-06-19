@@ -60,7 +60,7 @@ case "$cmd" in
     $COMPOSE up -d --build
     echo
     HOST_IP=$(hostname -I 2>/dev/null | awk '{print $1}' || echo localhost)
-    echo "✔ Dashboard is up at http://${HOST_IP}:${DASHBOARD_PORT:-8080}"
+    echo "✔ Dashboard is up at http://${HOST_IP}:${DASHBOARD_PORT:-8081}"
     ;;
   no-pull|local|rebuild)
     echo "▸ Skipping git pull — building from local working tree."

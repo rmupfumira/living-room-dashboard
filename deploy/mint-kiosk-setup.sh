@@ -5,7 +5,7 @@
 # no browser chrome, no screen blanking, and relaunches Chromium if it dies.
 #
 # Usage (run ON the Mint PC, as your normal user — NOT root):
-#   bash mint-kiosk-setup.sh http://192.168.1.140:8080/living-room
+#   bash mint-kiosk-setup.sh http://192.168.1.140:8081/living-room
 #
 # What it does:
 #   1. Installs chromium + unclutter (cursor hider)
@@ -27,7 +27,7 @@ set -euo pipefail
 URL="${1:-}"
 if [[ -z "$URL" ]]; then
   echo "Usage: $0 <dashboard-url>" >&2
-  echo "Example: $0 http://192.168.1.140:8080/living-room" >&2
+  echo "Example: $0 http://192.168.1.140:8081/living-room" >&2
   exit 2
 fi
 

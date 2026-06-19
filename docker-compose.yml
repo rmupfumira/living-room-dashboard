@@ -6,13 +6,13 @@
 #
 #   VITE_HA_URL=http://192.168.1.141:8123
 #   VITE_HA_TOKEN=eyJhbGciOiJI…
-#   DASHBOARD_PORT=8080
+#   DASHBOARD_PORT=8081           # living-room panel (kitchen uses 8080)
 #   TZ=Africa/Johannesburg
 #
 # Local CLI:  ./deploy.sh   (sources .env automatically)
 # ──────────────────────────────────────────────────────────────
 services:
-  nocturne:
+  living-room-dashboard:
     build:
       context: .
       dockerfile: Dockerfile
@@ -20,11 +20,11 @@ services:
       args:
         VITE_HA_URL: ${VITE_HA_URL:-}
         VITE_HA_TOKEN: ${VITE_HA_TOKEN:-}
-    image: nocturne:latest
-    container_name: nocturne
+    image: living-room-dashboard:latest
+    container_name: living-room-dashboard
     restart: unless-stopped
     ports:
-      - "${DASHBOARD_PORT:-8080}:80"
+      - "${DASHBOARD_PORT:-8081}:80"
     environment:
       TZ: ${TZ:-Africa/Johannesburg}
     networks:
