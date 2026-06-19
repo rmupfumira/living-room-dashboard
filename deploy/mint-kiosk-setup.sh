@@ -24,12 +24,8 @@
 # ──────────────────────────────────────────────────────────────
 set -euo pipefail
 
-URL="${1:-}"
-if [[ -z "$URL" ]]; then
-  echo "Usage: $0 <dashboard-url>" >&2
-  echo "Example: $0 http://192.168.1.140:8081/living-room" >&2
-  exit 2
-fi
+# Living-room panel → living-room-dashboard container (port 8081). Pass a URL to override.
+URL="${1:-http://192.168.1.140:8081/living-room}"
 
 if [[ "$(id -u)" -eq 0 ]]; then
   echo "Run this as your normal user (it will sudo when it needs to), not as root." >&2
