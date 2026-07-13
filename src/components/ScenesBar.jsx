@@ -3,6 +3,7 @@ import { Sparkles } from "lucide-react";
 import { ENTITIES } from "../entities";
 import { useEntity } from "../ha/HaContext";
 import { useService } from "../ha/useService";
+import { useConfirm } from "./Confirm";
 
 function toPascal(name) {
   return String(name)
@@ -32,8 +33,18 @@ function SceneBtn({ scene, onActivate }) {
 /** Footer scene bar — Good Morning · Night · Guest · Movie. */
 export default function ScenesBar({ onToast }) {
   const call = useService();
+  const confirm = useConfirm();
 
-  const activate = (scene) => {
+  // Guard against accidental taps (kids reach the footer): every scene button
+  // asks for confirmation before it changes a scene or an entity's state.
+  const activate = async (scene) => {
+    const ok = await confirm({
+      title: scene.name,
+      message: `Activate the “${scene.name}” scene?`,
+      confirmLabel: "Activate",
+      cancelLabel: "Cancel",
+    });
+    if (!ok) return;
     const domain = scene.entity.split(".")[0];
     onToast?.("sparkles", `${scene.name} activated`);
     if (domain === "scene") call("scene", "turn_on", {}, { entity_id: scene.entity });
