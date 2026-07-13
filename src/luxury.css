@@ -1810,6 +1810,33 @@ body {
   box-shadow: 0 0 36px rgba(227, 160, 8, 0.5); animation: gm-pulse 2.4s ease-in-out infinite;
 }
 
+/* ── After-dark "not secured" flag — pinned above everything incl. the
+   screensaver (z 205 < doorbell 210); pointer-events: none so a wake-tap
+   still falls through to the screensaver underneath. ── */
+.secflag {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 205; pointer-events: none;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  padding: 22px 32px 26px;
+  color: #fff;
+  background: linear-gradient(180deg, rgba(200, 26, 26, 0.97) 0%, rgba(150, 12, 12, 0.94) 100%);
+  box-shadow: 0 20px 60px -14px rgba(0, 0, 0, 0.75);
+  animation: secflag-pulse 1.5s ease-in-out infinite;
+}
+@keyframes secflag-pulse { 0%, 100% { filter: brightness(1); } 50% { filter: brightness(1.22); } }
+.secflag-head {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 34px; font-weight: 800; letter-spacing: 0.02em; text-transform: uppercase;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+}
+.secflag-head svg { color: #ffe08a; flex-shrink: 0; }
+.secflag-items { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px 20px; }
+.secflag-item {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 23px; font-weight: 700;
+  padding: 9px 18px; border-radius: 999px; background: rgba(0, 0, 0, 0.24);
+}
+.secflag-item svg { color: #ffd27a; flex-shrink: 0; }
+
 /* ── Power view: per-device usage list ── */
 .pw-devices {
   flex: 1; min-height: 0; background: var(--surf-1); box-shadow: var(--el-1); border-radius: var(--r-lg);

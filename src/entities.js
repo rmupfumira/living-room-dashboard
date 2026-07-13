@@ -91,6 +91,10 @@ export const ENTITIES = {
   /* ─── Weather ────────────────────────────────────────────── */
   weather: "weather.pirateweather",
 
+  /* ─── Sun (below_horizon = after sunset) — drives the after-dark
+     "not secured" flag in SecurityFlag. */
+  sun: "sun.sun",
+
   /* ─── Cameras (kitchen doorbell card — switchable feed) ──── */
   cameras: [
     { id: "doorbell", name: "Front Door", icon: "door-open", entity: "camera.doorbell_frigate" },
