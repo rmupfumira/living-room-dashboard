@@ -223,12 +223,60 @@ export const ENTITIES = {
     { id: "entArea", name: "Ent. Area", icon: "lock", entity: "lock.ent_area", kind: "lock" },
   ],
 
-  /* ─── Laundry status (read-only) ─────────────────────────── */
-  /* Both are input_select helpers with options running/finished — the user's
-     curated appliance state machines (LG washer + dryer). */
+  /* ─── Laundry (status + controls) ────────────────────────── */
+  /* `entity` = the user's curated running/finished input_select state machine.
+     Enriched with the plug POWER switch (always shown, loud when off), live
+     wattage, and — for the washer — the LG connected-appliance status +
+     remaining-time countdown (richer/more live than the input_select). The
+     dryer has no cycle API, so its running/finished comes from the (server-side,
+     reload-proof) input_select, with power as the live wattage + fallback. */
   laundry: [
-    { id: "washer", name: "Washer", icon: "washing-machine", entity: "input_select.washing_maschine_state", finished: "input_datetime.washing_machine_finished_timestamp" },
-    { id: "dryer", name: "Dryer", icon: "wind", entity: "input_select.dryer_state", finished: "input_datetime.dryer_finished_timestamp" },
+    {
+      id: "washer", name: "Washer", icon: "washing-machine",
+      entity: "input_select.washing_maschine_state",
+      finished: "input_datetime.washing_machine_finished_timestamp",
+      plug: "switch.washing_machine",            // POWER switch (must be on to run)
+      power: "sensor.washing_machine_power",      // live W
+      status: "sensor.washer_current_status",     // LG live status (running/rinsing/…)
+      remaining: "sensor.washer_remaining_time",  // finish timestamp → countdown
+      total: "sensor.washer_total_time",          // cycle minutes → progress %
+    },
+    {
+      id: "dryer", name: "Dryer", icon: "wind",
+      entity: "input_select.dryer_state",
+      finished: "input_datetime.dryer_finished_timestamp",
+      plug: "switch.dryer",                       // POWER switch
+      power: "sensor.dryer_power",                // live W (running when drawing)
+    },
+  ],
+
+  /* ─── Devices (appliance / power switches — the /devices control page) ──
+     Grouped switchable loads around the house. `kind` tints the tile + icon.
+     Toggling is domain-generic (fan/switch → toggle). Mirrors the HA mushroom
+     /devices list, reorganised for glanceability. */
+  devices: [
+    { group: "Air Conditioning", kind: "ac", icon: "wind", items: [
+      { name: "Living Room AC", entity: "fan.living_room_ac" },
+      { name: "Master Bedroom AC", entity: "switch.master_bed_ac_switch_0" },
+      { name: "Tadiwa's AC", entity: "switch.craig_ac" },
+      { name: "Tino's AC", entity: "switch.shellyplus1pm_fortune_ac" },
+      { name: "Guest Bedroom AC", entity: "switch.shellyplus1pm_a8032ab1ac9c_switch_0" },
+    ] },
+    { group: "Laundry", kind: "laundry", icon: "washing-machine", items: [
+      { name: "Washing Machine", entity: "switch.washing_machine" },
+      { name: "Dryer", entity: "switch.dryer" },
+    ] },
+    { group: "Water & Appliances", kind: "water", icon: "droplet", items: [
+      { name: "Geyser", entity: "switch.geyser", icon: "flame" },
+      { name: "Pool Pump", entity: "switch.pool_pump_2", icon: "waves" },
+      { name: "Irrigation Pump", entity: "switch.irrigation_pump", icon: "sprout" },
+      { name: "Laundry Iron", entity: "switch.laundry_iron_switch_0", icon: "shirt" },
+      { name: "Dishwasher", entity: "switch.dishwasher_2", icon: "utensils" },
+    ] },
+    { group: "Power & Servers", kind: "power", icon: "server", items: [
+      { name: "Server UPS", entity: "switch.server_ups_plug_none", icon: "server" },
+      { name: "Mini-PC Tablet", entity: "switch.mini_pc_switch_0", icon: "monitor" },
+    ] },
   ],
 
   /* ─── Guest WiFi (static — shown in a popup) ─────────────── */

@@ -1980,3 +1980,118 @@ body {
 .amb-light-n { font-weight: 300; font-size: 0.95rem; }
 .amb-light-s { font-weight: 300; font-size: 0.8rem; color: var(--warm-grey); }
 .amb-light.on .amb-light-s { color: var(--champ); }
+
+/* ════════════════════════════════════════════════════════
+   DEVICES VIEW — whole-house appliance / power switches.
+   Grouped tiles + washer/dryer appliance cards (power switch always shown).
+   ════════════════════════════════════════════════════════ */
+.devices-view { height: 100%; min-height: 0; overflow-y: auto; padding-right: 6px; display: flex; flex-direction: column; gap: 18px; }
+.dv-summaryhead { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; flex-shrink: 0; }
+.dv-title { display: inline-flex; align-items: center; gap: 10px; }
+.dv-title .sect-title { font-size: 22px; }
+.dv-summary { display: inline-flex; gap: 8px; flex-wrap: wrap; }
+.dv-chip { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; color: var(--ink-mute); background: var(--surf-1); border: 1px solid var(--line); border-radius: 99px; padding: 7px 14px; }
+.dv-chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ink-faint); }
+.dv-chip.run { color: var(--gold-bright); } .dv-chip.run .dot { background: var(--gold); box-shadow: 0 0 8px var(--gold); }
+.dv-chip.ok .dot { background: var(--success); }
+.dv-chip.mut .dot { background: var(--ink-faint); }
+.dv-chip.bad { color: #f0a9a9; } .dv-chip.bad .dot { background: var(--critical); }
+
+.dv-group { display: flex; flex-direction: column; gap: 10px; }
+.dv-glabel { font-size: 12px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-mute); }
+.dv-glabel b { color: var(--ink-faint); font-weight: 600; }
+.dv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(215px, 1fr)); gap: 12px; }
+
+.dv-tile { display: flex; align-items: center; gap: 12px; padding: 13px 15px; border-radius: var(--r-md); background: var(--surf-1); border: 1px solid var(--line); box-shadow: var(--el-1); cursor: pointer; font-family: var(--font); text-align: left; color: var(--ink); transition: border-color 0.16s, background 0.16s; }
+.dv-tile:hover { border-color: rgba(255,255,255,0.16); }
+.dv-tile:active { transform: scale(0.985); }
+.dv-tile .dv-ic { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex-shrink: 0; background: var(--recess); color: var(--ink-mute); }
+.dv-tile .dv-meta { flex: 1; min-width: 0; }
+.dv-tile .dv-n { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.dv-tile .dv-s { font-size: 13px; font-weight: 600; color: var(--ink-mute); margin-top: 2px; }
+.dv-tile .dv-sw { width: 42px; height: 24px; border-radius: 99px; background: rgba(255,255,255,0.12); position: relative; flex-shrink: 0; transition: background 0.18s; }
+.dv-tile .dv-sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--ink-faint); transition: all 0.18s; }
+/* on */
+.dv-tile.on { background: rgba(63, 185, 80, 0.07); border-color: rgba(63, 185, 80, 0.28); }
+.dv-tile.on .dv-s { color: var(--success); }
+.dv-tile.on .dv-sw { background: var(--success); }
+.dv-tile.on .dv-sw::after { left: auto; right: 3px; background: #07210d; }
+.dv-tile.ac.on .dv-ic { background: rgba(79, 140, 247, 0.16); color: #7da9ff; }
+.dv-tile.laundry.on .dv-ic { background: var(--gold-12); color: var(--gold-bright); }
+.dv-tile.water.on .dv-ic { background: rgba(227, 160, 8, 0.16); color: var(--warning); }
+.dv-tile.power.on .dv-ic { background: rgba(63, 185, 80, 0.16); color: var(--success); }
+/* unavailable */
+.dv-tile.na { opacity: 0.5; cursor: default; border-style: dashed; }
+.dv-tile.na .dv-s { color: var(--ink-faint); }
+.dv-tile.na .dv-sw { opacity: 0.4; }
+
+/* washer/dryer appliance cards */
+.dv-appgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; }
+.dv-appcard { background: var(--surf-1); border: 1px solid var(--line); border-radius: var(--r-lg); box-shadow: var(--el-1); padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.dv-apphead { display: flex; align-items: center; gap: 12px; }
+.dv-appi { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex-shrink: 0; background: var(--gold-12); color: var(--gold-bright); }
+.dv-appn { font-size: 17px; font-weight: 600; flex: 1; }
+.dv-badge { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 5px 11px; border-radius: 99px; white-space: nowrap; }
+.dv-badge.run { color: var(--gold-bright); background: var(--gold-12); }
+.dv-badge.idle { color: var(--ink-mute); background: var(--recess); }
+.dv-badge.done { color: var(--success); background: rgba(63, 185, 80, 0.14); }
+.dv-badge.off { color: var(--warning); background: rgba(227, 160, 8, 0.16); }
+.dv-live { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: dv-pulse 1.4s ease-in-out infinite; }
+@keyframes dv-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.dv-appsub { font-size: 14px; color: var(--ink-mute); margin-top: -4px; }
+.dv-prog { height: 8px; border-radius: 99px; background: rgba(255,255,255,0.08); overflow: hidden; }
+.dv-prog > span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright)); }
+.dv-apppow { display: flex; align-items: center; justify-content: space-between; padding-top: 12px; margin-top: auto; border-top: 1px solid var(--line); }
+.dv-pl { display: inline-flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; color: var(--ink-mute); }
+.dv-pl svg { color: var(--ink-mute); }
+/* power OFF — loud, never greyed */
+.dv-appcard.pooff { border-color: rgba(227, 160, 8, 0.45); background: rgba(227, 160, 8, 0.06); }
+.dv-appcard.pooff .dv-appi { background: rgba(227, 160, 8, 0.16); color: var(--warning); }
+.dv-appcard.pooff .dv-pl, .dv-appcard.pooff .dv-pl svg { color: var(--warning); }
+
+/* ════════════════════════════════════════════════════════
+   HOME — Option 10 command-center additions.
+   Common-area header (big clock + live verdict), room-nav row,
+   three-column body of reused cards, laundry-in-progress card.
+   ════════════════════════════════════════════════════════ */
+.hx-headright { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; flex-shrink: 0; }
+.hx-clock { font-size: clamp(40px, 5vw, 70px); font-weight: 300; letter-spacing: -0.02em; line-height: 0.9; color: var(--ink); }
+.hx-weather { display: inline-flex; align-items: center; gap: 7px; color: var(--ink-mute); }
+.hx-weather b { font-size: 20px; font-weight: 600; color: var(--ink); }
+
+.hx-verdict { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; padding: 9px 15px 9px 12px; border-radius: 99px; border: 1px solid; background: transparent; cursor: pointer; font-family: var(--font); }
+.hx-verdict.ok { color: var(--success); border-color: rgba(63, 185, 80, 0.3); background: rgba(63, 185, 80, 0.08); }
+.hx-verdict.warn { color: var(--warning); border-color: rgba(227, 160, 8, 0.35); background: rgba(227, 160, 8, 0.09); }
+.hx-verdict-t { font-size: 17px; font-weight: 700; }
+.hx-verdict-s { font-size: 13px; font-weight: 500; color: var(--ink-mute); border-left: 1px solid var(--line); padding-left: 10px; max-width: 320px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.hx-rooms { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; flex-shrink: 0; }
+.hx-room { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-radius: var(--r-md); border: none; cursor: pointer; text-align: left; background: var(--surf-1); box-shadow: var(--el-1); color: var(--ink); transition: transform 0.16s, background 0.16s; }
+.hx-room:hover { transform: translateY(-2px); }
+.hx-room-ic { color: var(--gold); flex-shrink: 0; }
+.hx-room-n { font-size: 15px; font-weight: 600; }
+.hx-room-s { font-size: 13px; font-weight: 600; color: var(--ink-mute); margin-top: 2px; }
+
+.hx-body { flex: 1; min-height: 0; }
+.hx-body .lux-col { overflow-y: auto; }
+.home .scenes-bar { flex-shrink: 0; }
+
+/* Laundry-in-progress card (home) */
+.lst { background: var(--surf-1); box-shadow: var(--el-1); border-radius: var(--r-lg); padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
+.lst-head { display: inline-flex; align-items: center; gap: 9px; }
+.lst-item { display: flex; flex-direction: column; gap: 8px; }
+.lst-row { display: flex; align-items: center; gap: 12px; }
+.lst-ic { width: 40px; height: 40px; border-radius: 11px; display: grid; place-items: center; flex-shrink: 0; background: var(--gold-12); color: var(--gold-bright); }
+.lst-row.done .lst-ic { background: rgba(63, 185, 80, 0.14); color: var(--success); }
+.lst-meta { flex: 1; min-width: 0; }
+.lst-n { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 9px; }
+.lst-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 9px; border-radius: 99px; }
+.lst-badge.run { color: var(--gold-bright); background: var(--gold-12); }
+.lst-badge.done { color: var(--success); background: rgba(63, 185, 80, 0.14); }
+.lst-live { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); animation: dv-pulse 1.4s ease-in-out infinite; }
+.lst-s { font-size: 13px; font-weight: 500; color: var(--ink-mute); margin-top: 2px; }
+.lst-prog { height: 7px; border-radius: 99px; background: rgba(255, 255, 255, 0.08); overflow: hidden; }
+.lst-prog > span { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright)); }
+.lst-warn { display: flex; align-items: center; gap: 9px; width: 100%; text-align: left; cursor: pointer; font-family: var(--font); font-size: 13.5px; font-weight: 600; color: var(--warning); background: rgba(227, 160, 8, 0.1); border: 1px solid rgba(227, 160, 8, 0.32); border-radius: var(--r-sm); padding: 11px 13px; }
+.lst-warn b { color: var(--warning); }
+.lst-warn:hover { background: rgba(227, 160, 8, 0.16); }

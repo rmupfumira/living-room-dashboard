@@ -30,6 +30,7 @@ import IrrigationView from "./components/IrrigationView";
 import PoolView from "./components/PoolView";
 import CamerasView from "./components/CamerasView";
 import TinotendaView from "./components/TinotendaView";
+import DevicesView from "./components/DevicesView";
 import HomeView from "./components/HomeView";
 import AmbienceView from "./components/AmbienceView";
 import SettingsView from "./components/SettingsView";
@@ -56,6 +57,7 @@ const VIEW_PATH = {
   irrigation: "/irrigation",
   pool: "/swimming-pool",
   cameras: "/cameras",
+  devices: "/devices",
   settings: "/settings",
 };
 const ROUTES = Object.fromEntries(Object.entries(VIEW_PATH).map(([v, p]) => [p, v]));
@@ -74,6 +76,7 @@ const SYSTEM_VIEWS = {
   irrigation: IrrigationView,
   pool: PoolView,
   cameras: CamerasView,
+  devices: DevicesView,
   settings: SettingsView,
 };
 
