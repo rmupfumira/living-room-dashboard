@@ -49,7 +49,6 @@ import OfflineOverlay from "./components/OfflineOverlay";
 const VIEW_PATH = {
   home: "/",
   kitchen: "/kitchen",
-  living: "/living-room",
   tinotenda: "/tinotenda",
   vacuum: "/vacuum",
   power: "/power",
@@ -61,10 +60,18 @@ const VIEW_PATH = {
   settings: "/settings",
 };
 const ROUTES = Object.fromEntries(Object.entries(VIEW_PATH).map(([v, p]) => [p, v]));
-const ROOM_VIEWS = ["kitchen", "living"];
+const ROOM_VIEWS = ["kitchen"];
 
+// Legacy paths that now live elsewhere — the Home IS the living-room panel, so
+// /living-room folds into /. Applied on load, popstate, and navigate().
+const REDIRECTS = { "/living-room": "/" };
+
+function cleanPath(p) {
+  return (p || "").replace(/\/+$/, "") || "/";
+}
 function viewFromPath() {
-  const p = window.location.pathname.replace(/\/+$/, "") || "/";
+  let p = cleanPath(window.location.pathname);
+  if (REDIRECTS[p]) p = REDIRECTS[p];
   return ROUTES[p] || "home";
 }
 
@@ -90,6 +97,15 @@ export default function App() {
   const [toast, setToast] = useState(null);
   const toastTimer = useRef(null);
 
+  // Rewrite any legacy URL (e.g. /living-room) to its new home on first load.
+  useEffect(() => {
+    const target = REDIRECTS[cleanPath(window.location.pathname)];
+    if (target) {
+      window.history.replaceState({}, "", target);
+      setView(viewFromPath());
+    }
+  }, []);
+
   // Back/forward navigation between views.
   useEffect(() => {
     const onPop = () => {
@@ -107,8 +123,9 @@ export default function App() {
   };
 
   const navigate = (path) => {
-    if (window.location.pathname.replace(/\/+$/, "") !== path.replace(/\/+$/, "")) {
-      window.history.pushState({}, "", path);
+    const target = REDIRECTS[cleanPath(path)] || path;
+    if (cleanPath(window.location.pathname) !== cleanPath(target)) {
+      window.history.pushState({}, "", target);
     }
     setView(viewFromPath());
     setSubview(null);

@@ -125,7 +125,7 @@ export default function HomeView({ onToast, onOpenSecurity, navigate }) {
   const livingTemp = numv(entities[ENTITIES.climate.living.temp]);
   const tinoTemp = numv(entities[ENTITIES.tinotenda.temp]);
   const rooms = [
-    { name: "Living Room", temp: livingTemp, path: "/living-room", amb: "radial-gradient(90% 90% at 65% 25%,rgba(244,180,76,.28),transparent 60%),linear-gradient(160deg,#2a2118,#14110d)" },
+    { name: "Living Room", temp: livingTemp, path: "/", amb: "radial-gradient(90% 90% at 65% 25%,rgba(244,180,76,.28),transparent 60%),linear-gradient(160deg,#2a2118,#14110d)" },
     { name: "Kitchen", temp: NaN, sub: "Ambience", path: "/kitchen", amb: "radial-gradient(90% 90% at 60% 30%,rgba(200,210,220,.14),transparent 60%),linear-gradient(160deg,#1b2026,#101317)" },
     { name: "Tinotenda", temp: tinoTemp, path: "/tinotenda", amb: "radial-gradient(90% 90% at 60% 30%,rgba(169,139,247,.2),transparent 60%),linear-gradient(160deg,#1c1a2a,#111016)" },
     { name: "Cameras", temp: NaN, sub: "8 feeds", path: "/cameras", amb: "radial-gradient(90% 90% at 55% 25%,rgba(91,157,249,.16),transparent 60%),linear-gradient(160deg,#141c26,#0c1013)" },

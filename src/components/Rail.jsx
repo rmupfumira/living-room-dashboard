@@ -1,4 +1,4 @@
-import { House, ChefHat, Sofa, BedDouble, Bot, Zap, Flame, Sprout, Waves, Video, LayoutDashboard, Settings, RefreshCw, Wifi } from "lucide-react";
+import { House, ChefHat, BedDouble, Bot, Zap, Flame, Sprout, Waves, Video, LayoutDashboard, Settings, RefreshCw, Wifi } from "lucide-react";
 
 /**
  * Left nav rail. Home is the clean overview landing; Kitchen / Living /
@@ -8,7 +8,6 @@ import { House, ChefHat, Sofa, BedDouble, Bot, Zap, Flame, Sprout, Waves, Video,
 const ROOMS = [
   { id: "home", Icon: House, label: "Home" },
   { id: "kitchen", Icon: ChefHat, label: "Kitchen" },
-  { id: "living", Icon: Sofa, label: "Living" },
   { id: "tinotenda", Icon: BedDouble, label: "Tinotenda" },
   { id: "vacuum", Icon: Bot, label: "Vacuum" },
   { id: "power", Icon: Zap, label: "Power" },
