@@ -202,19 +202,19 @@ export default function HomeView({ onToast, onOpenSecurity, navigate }) {
         <div className="ocard">
           <div className="octitle">Energy</div>
           <div className="oflow">
-            <div className="oflow-row solar">
+            <div className="oflow-row oe-solar">
               <span className="ring"><Sun size={18} /></span>
               <div className="oflow-meta"><div className="oflow-v num">{f1(pvKw)}<small>kW</small></div><div className="oflow-l">Solar · {pvKw > 0.05 ? "Producing" : "Idle"}</div></div>
             </div>
-            <div className="oflow-row batt">
+            <div className="oflow-row oe-batt">
               <span className="ring">{charging ? <BatteryCharging size={18} /> : <Battery size={18} />}</span>
               <div className="oflow-meta"><div className="oflow-v num">{Number.isFinite(soc) ? Math.round(soc) : "—"}<small>%</small></div><div className="oflow-l">Battery · {charging ? "Charging" : battKw < -0.05 ? "Discharging" : "Idle"}</div></div>
             </div>
-            <div className="oflow-row home">
+            <div className="oflow-row oe-home">
               <span className="ring"><House size={18} /></span>
               <div className="oflow-meta"><div className="oflow-v num">{f1(loadKw)}<small>kW</small></div><div className="oflow-l">Home · Using</div></div>
             </div>
-            <div className="oflow-row grid">
+            <div className="oflow-row oe-grid">
               <span className="ring"><UtilityPole size={18} /></span>
               <div className="oflow-meta"><div className="oflow-v num">{f1(gridKw)}<small>kW</small></div><div className="oflow-l">{gridState}</div></div>
             </div>
@@ -235,6 +235,11 @@ export default function HomeView({ onToast, onOpenSecurity, navigate }) {
             <span className="li"><Lightbulb size={19} /></span>
             <div className="lt"><div className="ln">Living Room Lights</div><div className="ls">{lightsOn ? `On · ${bri || 0}%` : "Off"}</div></div>
             <button type="button" className={"otgl" + (lightsOn ? "" : " off")} onClick={toggleLights} aria-label="Living lights" />
+          </div>
+          <div className="obri">
+            <Sun size={16} />
+            <div className="obri-track"><span style={{ width: (lightsOn ? bri : 0) + "%" }} /></div>
+            <span className="obri-val num">{lightsOn ? bri : 0}%</span>
           </div>
           <div className="litpresets">
             <button type="button" className={"lpreset" + (lightsOn && bri >= 85 ? " on" : "")} onClick={() => preset(100)}>Bright</button>
