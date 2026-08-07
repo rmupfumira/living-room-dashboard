@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import {
-  ShieldCheck, ShieldAlert, Shield, Siren, Fence, Warehouse, DoorClosed, Lock, DoorOpen,
+  ShieldCheck, ShieldAlert, Shield, Siren, Fence, Warehouse, DoorClosed, Lock, Unlock, DoorOpen,
   Cloud, Sofa, ChefHat, BedDouble, Video, Sun, House, BatteryCharging, Battery, UtilityPole,
   Lightbulb, Sunrise, Moon, Clapperboard, Flame, Droplet, Thermometer, WashingMachine, Wind,
   Power, Check, AlertTriangle, Bell,
@@ -108,17 +108,24 @@ export default function HomeView({ onToast, onOpenSecurity, navigate }) {
   const geyserW = numv(entities[G.power]);
   const heating = geyserOn && Number.isFinite(geyserW) && geyserW > 50;
 
-  /* quick actions */
+  /* quick actions — every one asks for confirmation before firing */
   const scene = (id) => { const s = ENTITIES.scenes.find((x) => x.id === id); if (s) { onToast?.("sparkles", `${s.name}`); call("input_boolean", s.momentary ? "turn_on" : "toggle", {}, { entity_id: s.entity }); } };
   const garageOpen = /^(open|opening)$/i.test(st(ENTITIES.security.garage) || "");
+  const MASTER_LOCK = "lock.master_bedroom_2";
+  const masterLocked = st(MASTER_LOCK) === "locked";
   const quick = [
-    { id: "morning", name: "Good Morning", Icon: Sunrise, tone: "amber", on: () => scene("morning") },
-    { id: "night", name: "Good Night", Icon: Moon, tone: "violet", on: () => scene("night") },
-    { id: "movie", name: "Movie", Icon: Clapperboard, tone: "violet", on: () => scene("movie") },
-    { id: "garage", name: garageOpen ? "Close Garage" : "Garage", Icon: Warehouse, tone: "green", on: async () => { if (!garageOpen) { const ok = await confirm({ title: "Open Garage?", confirmLabel: "Open", danger: true }); if (!ok) return; } onToast?.("warehouse", `Garage ${garageOpen ? "closing" : "opening"}`); call("cover", garageOpen ? "close_cover" : "open_cover", {}, { entity_id: ENTITIES.security.garage }); } },
-    { id: "gate", name: "Open Gate", Icon: Fence, tone: "blue", on: openGate },
-    { id: "geyser", name: "Geyser Boost", Icon: Flame, tone: "blue", on: () => { onToast?.(geyserOn ? "power-off" : "power", `Geyser ${geyserOn ? "off" : "on"}`); call(G.toggle.split(".")[0], "toggle", {}, { entity_id: G.toggle }); } },
+    { id: "morning", name: "Good Morning", Icon: Sunrise, tone: "amber", run: () => scene("morning") },
+    { id: "night", name: "Good Night", Icon: Moon, tone: "violet", run: () => scene("night") },
+    { id: "movie", name: "Movie", Icon: Clapperboard, tone: "violet", run: () => scene("movie") },
+    { id: "garage", name: garageOpen ? "Close Garage" : "Open Garage", Icon: Warehouse, tone: "green", run: () => { onToast?.("warehouse", `Garage ${garageOpen ? "closing" : "opening"}`); call("cover", garageOpen ? "close_cover" : "open_cover", {}, { entity_id: ENTITIES.security.garage }); } },
+    { id: "gate", name: "Open Gate", Icon: Fence, tone: "blue", run: () => { onToast?.("door-open", "Opening gate…"); fire(ENTITIES.gateScript); } },
+    { id: "masterbed", name: masterLocked ? "Unlock Master Bed" : "Lock Master Bed", Icon: masterLocked ? Lock : Unlock, tone: "amber", run: () => { onToast?.("lock", `Master bedroom ${masterLocked ? "unlocking" : "locking"}`); call("lock", masterLocked ? "unlock" : "lock", {}, { entity_id: MASTER_LOCK }); } },
+    { id: "geyser", name: "Geyser Boost", Icon: Flame, tone: "blue", run: () => { onToast?.(geyserOn ? "power-off" : "power", `Geyser ${geyserOn ? "off" : "on"}`); call(G.toggle.split(".")[0], "toggle", {}, { entity_id: G.toggle }); } },
   ];
+  const runQuick = async (q) => {
+    const ok = await confirm({ title: `${q.name}?`, message: `Confirm: ${q.name}.`, confirmLabel: "Yes, do it", cancelLabel: "Cancel" });
+    if (ok) q.run();
+  };
 
   /* weather + rooms */
   const outTemp = Number(entities[ENTITIES.weather]?.attributes?.temperature);
@@ -254,8 +261,8 @@ export default function HomeView({ onToast, onOpenSecurity, navigate }) {
           <div className="octitle">Quick Actions</div>
           <div className="qa">
             {quick.map((q) => (
-              <button type="button" className={"qtile " + q.tone} key={q.id} onClick={q.on}>
-                <q.Icon size={22} /><span>{q.name}</span>
+              <button type="button" className={"qtile " + q.tone} key={q.id} onClick={() => runQuick(q)}>
+                <q.Icon size={26} /><span>{q.name}</span>
               </button>
             ))}
           </div>
