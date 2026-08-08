@@ -2128,8 +2128,8 @@ body {
 .o10 .oroom .rt { font-size: 1.5em; font-weight: 300; line-height: 1; margin-top: 0.05em; color: #fff; }
 
 /* cards */
-.o10 .grid-primary { display: grid; grid-template-columns: 1.9fr 1.05fr; grid-template-rows: auto; gap: 0.75em; flex: 0 0 auto; min-height: 0; }
-.o10 .grid-controls { display: grid; grid-template-columns: 1.15fr 1.25fr 0.95fr; grid-template-rows: auto; gap: 0.75em; flex: 0 0 auto; min-height: 0; }
+.o10 .grid-primary { display: grid; grid-template-columns: 1.9fr 1.05fr; grid-template-rows: auto; align-items: start; gap: 0.75em; flex: 0 0 auto; min-height: 0; }
+.o10 .grid-controls { display: grid; grid-template-columns: 1.15fr 1.25fr 0.95fr; grid-template-rows: auto; align-items: start; gap: 0.75em; flex: 0 0 auto; min-height: 0; }
 .o10 .ocard { background: var(--glass); border: 1px solid var(--stroke); border-radius: var(--or-lg); padding: 0.9em 1.05em; box-shadow: 0 24px 60px -30px rgba(0,0,0,.7); display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
 .o10 .octitle { font-size: 0.7em; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--o-muted); margin-bottom: 0.85em; }
 .o10 .ocardhead { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85em; }
@@ -2212,7 +2212,7 @@ body {
 .o10 .gfoot .gtarget { font-weight: 600; color: var(--o-text); }
 
 /* bottom bar */
-.o10 .obottom { display: grid; grid-template-columns: 0.85fr 1.15fr 1.3fr; gap: 0.75em; flex: 0 0 auto; }
+.o10 .obottom { display: grid; grid-template-columns: 0.85fr 1.15fr 1.3fr; align-items: start; gap: 0.75em; flex: 0 0 auto; }
 .o10 .clm { display: flex; justify-content: space-between; gap: 0.4em; }
 .o10 .cstat { flex: 1; display: flex; flex-direction: column; gap: 0.4em; }
 .o10 .cstat svg { color: var(--o-muted); }
