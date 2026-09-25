@@ -2252,7 +2252,8 @@ body {
 .o10 .obtn:hover { background: var(--glass-2); border-color: var(--stroke-2); }
 .o10 .obtn:active { transform: scale(0.98); }
 .o10 .obtn span { font-size: 1.15em; font-weight: 600; text-align: center; }
-.o10 .obtn.hero span { font-size: 1.6em; font-weight: 600; }
+.o10 .obtn.hero { gap: 0.35em; }
+.o10 .obtn.hero span { font-size: 2.4em; font-weight: 650; line-height: 1.02; letter-spacing: -0.01em; }
 .o10 .obtn.amber svg { color: var(--amber); } .o10 .obtn.violet svg { color: var(--violet); }
 .o10 .obtn.blue svg { color: var(--blue); } .o10 .obtn.green svg { color: var(--green); }
 /* hero buttons get a soft tint by tone so they read as the highlight */

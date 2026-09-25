@@ -152,7 +152,7 @@ export default function HomeView({ onToast, onOpenSecurity, navigate }) {
         <div className="obig-hero">
           {heroActions.map((a) => (
             <button type="button" className={"obtn hero " + a.tone} key={a.id} onClick={() => runAction(a)}>
-              <a.Icon size={46} /><span>{a.name}</span>
+              <a.Icon size={56} /><span>{a.name}</span>
             </button>
           ))}
         </div>
