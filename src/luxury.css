@@ -168,6 +168,8 @@ body {
 
 /* ── rail — room nav with strong active state (correction 4) ── */
 .lux-rail {
+  position: relative;
+  z-index: 206;            /* sit above the .secflag "not secured" banner (z-205) so the Home button is never hidden */
   background: var(--surf-1);
   border-radius: var(--r-xl);
   box-shadow: var(--el-1);
@@ -2235,6 +2237,36 @@ body {
 .o10 .lwarn b { color: var(--amber); }
 .o10 .oemptied { font-size: 0.8em; color: var(--o-muted); }
 .o10 .live { display: inline-block; width: 0.5em; height: 0.5em; border-radius: 50%; background: var(--violet); animation: pulse 1.4s ease-in-out infinite; }
+
+/* ── Option 10 simplified Home (action-first) ── */
+.o10 .overd.asbtn { background: rgba(63,217,139,.12); border: 1px solid rgba(63,217,139,.25); cursor: pointer; font-family: inherit; }
+.o10 .overd.asbtn.warn { background: rgba(244,180,76,.12); border-color: rgba(244,180,76,.28); }
+.o10 .osec { flex: 0 0 auto; }
+
+/* big centered action buttons */
+.o10 .obig { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; gap: 0.7em; justify-content: center; }
+.o10 .obig-hero { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7em; flex: 1.35 1 0; min-height: 5.5em; }
+.o10 .obig-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7em; flex: 1 1 0; min-height: 4.5em; }
+.o10 .obtn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.5em; border-radius: var(--or-lg);
+  background: var(--glass); border: 1px solid var(--stroke); cursor: pointer; color: var(--o-text); font-family: inherit; transition: 0.16s var(--oease); }
+.o10 .obtn:hover { background: var(--glass-2); border-color: var(--stroke-2); }
+.o10 .obtn:active { transform: scale(0.98); }
+.o10 .obtn span { font-size: 1.15em; font-weight: 600; text-align: center; }
+.o10 .obtn.hero span { font-size: 1.6em; font-weight: 600; }
+.o10 .obtn.amber svg { color: var(--amber); } .o10 .obtn.violet svg { color: var(--violet); }
+.o10 .obtn.blue svg { color: var(--blue); } .o10 .obtn.green svg { color: var(--green); }
+/* hero buttons get a soft tint by tone so they read as the highlight */
+.o10 .obtn.hero.amber { background: linear-gradient(160deg, rgba(244,180,76,.14), rgba(244,180,76,.05)); border-color: rgba(244,180,76,.3); }
+.o10 .obtn.hero.violet { background: linear-gradient(160deg, rgba(169,139,247,.16), rgba(169,139,247,.05)); border-color: rgba(169,139,247,.32); }
+
+/* slim glance strip */
+.o10 .oglance { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7em; flex: 0 0 auto; }
+.o10 .ochip { display: flex; align-items: center; gap: 0.6em; padding: 0.7em 1em; border-radius: var(--or); background: var(--glass);
+  border: 1px solid var(--stroke); cursor: pointer; color: var(--o-text); font-family: inherit; }
+.o10 .ochip:hover { border-color: var(--stroke-2); }
+.o10 .ochip svg { color: var(--o-muted); flex: none; }
+.o10 .ochip span { font-size: 1.25em; font-weight: 600; }
+.o10 .ochip small { font-size: 0.8em; color: var(--o-muted); margin-left: auto; text-align: right; }
 
 /* Laundry-in-progress card (home) */
 .lst { background: var(--surf-1); box-shadow: var(--el-1); border-radius: var(--r-lg); padding: 16px 18px; display: flex; flex-direction: column; gap: 12px; }
